@@ -1,0 +1,31 @@
+[gd_scene format=3 uid="uid://bv25gl45o5yyl"]
+
+[sub_resource type="SphereMesh" id="SphereMesh_g4v7s"]
+radius = 0.1
+height = 0.2
+
+[sub_resource type="BoxMesh" id="BoxMesh_g4v7s"]
+size = Vector3(0.11914648, 1.8840332, 1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_yf5fn"]
+size = Vector3(0.13476563, 1.8134155, 0.95825195)
+
+[node name="Nodo3D" type="Node3D" unique_id=1189578759]
+transform = Transform3D(0.9953962, 0, 0.09584575, 0, 1, 0, -0.09584575, 0, 0.9953962, 0, 0, 0)
+
+[node name="Puerta" type="AnimatableBody3D" parent="." unique_id=2134005621]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.437904, 0, 0.49764413)
+
+[node name="MangoMesh" type="MeshInstance3D" parent="Puerta" unique_id=1381773568]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.32530552, 0.60241985, 0.3423323)
+mesh = SubResource("SphereMesh_g4v7s")
+skeleton = NodePath("../..")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Puerta" unique_id=37166979]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.44042677, 0.4420166, 0)
+mesh = SubResource("BoxMesh_g4v7s")
+skeleton = NodePath("../..")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Puerta" unique_id=1393465459]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.4326172, 0.45645142, 0.004272461)
+shape = SubResource("BoxShape3D_yf5fn")

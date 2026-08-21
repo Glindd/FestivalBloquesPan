@@ -1,0 +1,13 @@
+[gd_scene format=3 uid="uid://cbdxtu7kb43ce"]
+
+[ext_resource type="PackedScene" uid="uid://da70bkb27htgh" path="res://objetos/gato.tscn" id="1_1m2tr"]
+[ext_resource type="Script" uid="uid://r6jml52b7vrp" path="res://scripts/test_general(Principal_Game).gd" id="1_sqgaj"]
+[ext_resource type="PackedScene" uid="uid://upovdypmx8qk" path="res://objetos/SueloTest.tscn" id="2_sqgaj"]
+
+[node name="TestGeneral" type="Node3D" unique_id=1047735781]
+script = ExtResource("1_sqgaj")
+
+[node name="Gato" parent="." unique_id=1373370068 instance=ExtResource("1_1m2tr")]
+transform = Transform3D(0.155, 0, 0, 0, 0.155, 0, 0, 0, 0.155, 0, 0.36342216, 0)
+
+[node name="StaticBody3D" parent="." unique_id=766345700 instance=ExtResource("2_sqgaj")]
