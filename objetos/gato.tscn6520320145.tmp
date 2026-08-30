@@ -4,7 +4,7 @@
 [ext_resource type="PackedScene" uid="uid://7am66ghqrttv" path="res://objetos/input_synchronizer.tscn" id="2_nxguc"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_g4v7s"]
-size = Vector3(2.1755986, 3.1354833, 4.1993713)
+size = Vector3(3.3193665, 3.1354833, 2.0059814)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_0w8vw"]
 resource_name = "Material"
@@ -117,16 +117,12 @@ bind/26/name = &"Hueso.021"
 bind/26/bone = -1
 bind/26/pose = Transform3D(0.11458532, 0.21760608, -0.9692871, 0.25208685, -0.9501457, -0.1835081, -0.96089655, -0.22331713, -0.16372846, -0.5751542, -1.6223643, 1.9294828)
 
-[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_nxguc"]
-properties/0/path = NodePath("SpringArm3D:rotation")
-properties/0/spawn = true
-properties/0/replication_mode = 1
-
 [node name="Gato" type="CharacterBody3D" unique_id=620659913]
 transform = Transform3D(0.155, 0, 0, 0, 0.155, 0, 0, 0, 0.155, 0, 0, 0)
 script = ExtResource("1_jmo73")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=964144500]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 0, -0.173, -1.394)
 shape = SubResource("BoxShape3D_g4v7s")
 
 [node name="Label3D" type="Label3D" parent="." unique_id=282183671]
@@ -141,16 +137,17 @@ text = "miau"
 wait_time = 0.15
 
 [node name="SpringArm3D" type="SpringArm3D" parent="." unique_id=1537091664]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.395915, -1.8838634)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.7947233, -2.026879)
+spring_length = 2.0
 
 [node name="Camera3D" type="Camera3D" parent="SpringArm3D" unique_id=2116723086]
-transform = Transform3D(6.451613, 0, 0, 0, 6.451613, 0, 0, 0, 6.451613, 0, 0, 0)
+transform = Transform3D(6.4516134, 0, 0, 0, 6.451613, 0, 0, 0, 6.451613, 0, 0, 0)
 fov = 80.0
 
 [node name="Model" type="Node3D" parent="." unique_id=1559442124]
 
 [node name="Skeleton3D" type="Skeleton3D" parent="Model" unique_id=831426350]
-transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 0.023999942, 0.49300003, 1.361407)
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 0.023801684, 0.49323237, -0.0006908179)
 bones/0/name = "Hueso"
 bones/0/parent = -1
 bones/0/rest = Transform3D(-0.12526405, 0.9804382, 0.15182252, -0.9917026, -0.11927932, -0.047942135, -0.028895013, -0.15656821, 0.98724437, -0.26720697, 0.0696128, 0.04743868)
@@ -344,6 +341,3 @@ bones/26/scale = Vector3(1, 1, 0.99999994)
 [node name="Cube" type="MeshInstance3D" parent="Model/Skeleton3D" unique_id=570706382]
 mesh = SubResource("ArrayMesh_ym5h7")
 skin = SubResource("Skin_bd5yi")
-
-[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="." unique_id=2026625554]
-replication_config = SubResource("SceneReplicationConfig_nxguc")

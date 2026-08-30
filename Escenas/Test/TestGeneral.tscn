@@ -6,8 +6,28 @@
 
 [node name="TestGeneral" type="Node3D" unique_id=1047735781]
 script = ExtResource("1_sqgaj")
+player_scene = ExtResource("1_1m2tr")
 
 [node name="Gato" parent="." unique_id=1373370068 instance=ExtResource("1_1m2tr")]
-transform = Transform3D(0.155, 0, 0, 0, 0.155, 0, 0, 0, 0.155, 0, 0.36342216, 0)
+transform = Transform3D(0.155, 0, 0, 0, 0.155, 0, 0, 0, 0.155, 0, -0.905151, 0)
+visible = false
 
 [node name="StaticBody3D" parent="." unique_id=766345700 instance=ExtResource("2_sqgaj")]
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=884808267]
+transform = Transform3D(-0.8660254, -0.43301278, 0.25, 0, 0.49999997, 0.86602545, -0.50000006, 0.75, -0.43301266, 0, 12.060363, 0)
+shadow_enabled = true
+
+[node name="SpawnPoints" type="Node3D" parent="." unique_id=1844476207]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.20533323, 0)
+
+[node name="Marker3D" type="Marker3D" parent="SpawnPoints" unique_id=342682192]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.84555864, 0.06331003, 0.9336369)
+
+[node name="Marker3D2" type="Marker3D" parent="SpawnPoints" unique_id=251406494]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.84555864, 0.06331003, -1.2570765)
+
+[node name="Marker3D3" type="Marker3D" parent="SpawnPoints" unique_id=616551672]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.9976437, 0.06331003, -0.05552101)
+
+[node name="Players" type="Node3D" parent="." unique_id=971010479]
