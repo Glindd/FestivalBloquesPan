@@ -4,7 +4,7 @@
 [ext_resource type="PackedScene" uid="uid://7am66ghqrttv" path="res://objetos/input_synchronizer.tscn" id="2_nxguc"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_g4v7s"]
-size = Vector3(2.1755986, 3.1354833, 4.1993713)
+size = Vector3(2.1755986, 2.0257494, 4.1993713)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_0w8vw"]
 resource_name = "Material"
@@ -127,6 +127,7 @@ transform = Transform3D(0.155, 0, 0, 0, 0.155, 0, 0, 0, 0.155, 0, 0, 0)
 script = ExtResource("1_jmo73")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=964144500]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5548669, 0)
 shape = SubResource("BoxShape3D_g4v7s")
 
 [node name="Label3D" type="Label3D" parent="." unique_id=282183671]
@@ -141,7 +142,8 @@ text = "miau"
 wait_time = 0.15
 
 [node name="SpringArm3D" type="SpringArm3D" parent="." unique_id=1537091664]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.395915, -1.8838634)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.395915, -0.008819757)
+spring_length = 0.5
 
 [node name="Camera3D" type="Camera3D" parent="SpringArm3D" unique_id=2116723086]
 transform = Transform3D(6.451613, 0, 0, 0, 6.451613, 0, 0, 0, 6.451613, 0, 0, 0)

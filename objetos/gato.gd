@@ -4,8 +4,10 @@ extends CharacterBody3D
 @export var jump_speed: float = 6
 @export var acceleration: float = 15
 @export var mouse_sensitivy: float = 0.005
-@export var camera_min_pitch: float = -20
+@export var camera_min_pitch: float = -10
 @export var camera_max_pitch: float = 30
+@export var spring_min_pitch: float = -50
+@export var spring_max_pitch: float = 50
 
 
 @onready var label_3d: Label3D = $Label3D
@@ -32,9 +34,9 @@ func _unhandled_input(event: InputEvent) -> void:
 		return
 	var mouse_motion: InputEventMouseMotion = event as InputEventMouseMotion
 	if mouse_motion:
-		spring_arm_3d.rotation.y -= mouse_motion.relative.x * mouse_sensitivy
+		spring_arm_3d.rotation.y = spring_arm_3d.rotation.y - input_synchronizer.mouse_vector.x * mouse_sensitivy
 		camera_3d.rotation.x = clamp(
-			camera_3d.rotation.x - mouse_motion.relative.y * mouse_sensitivy,
+			camera_3d.rotation.x - input_synchronizer.mouse_vector.y * mouse_sensitivy,
 			deg_to_rad(camera_min_pitch),
 			deg_to_rad(camera_max_pitch)
 		)
@@ -65,19 +67,21 @@ func _physics_process(delta: float) -> void:
 	velocity.x = result.x
 	velocity.z = result.y
 	
-	if not move_input.is_zero_approx():
-		model.rotation.y = lerp_angle(
-			model.rotation.y,
-			spring_arm_3d.rotation.y,
-			0.1
-		)
+	#if not move_input.is_zero_approx():
+	model.rotation.y = lerp_angle(
+		model.rotation.y,
+		spring_arm_3d.rotation.y,
+		0.1
+	)
 	
 	move_and_slide()
 
 func _on_sync_timeout() -> void:
-	_sync(global_position, velocity, rotation)
+	_sync(global_position, velocity, model.rotation)
+
 func _sync(pos: Vector3, vel: Vector3, rot: Vector3) -> void:
 	global_position = global_position.lerp(pos, 0.5)
 	velocity = velocity.lerp(vel, 0.5)
-	rotation = rotation.lerp(rot, 0.5)
+	# model.rotation = model.rotation.lerp(rot, 0.5)
+	# spring_arm_3d.rotation = spring_arm_3d.rotation.lerp(rot, 0.5)
 	
