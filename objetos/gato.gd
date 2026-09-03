@@ -1,14 +1,22 @@
 extends CharacterBody3D
 
-@export var move_speed: float = 5
+@export var move_speed: float = 1
 @export var jump_speed: float = 6
-@export var acceleration: float = 15
+@export var acceleration: float = 5
 @export var mouse_sensitivy: float = 0.005
 @export var camera_min_pitch: float = -10
 @export var camera_max_pitch: float = 30
 @export var spring_min_pitch: float = -50
 @export var spring_max_pitch: float = 50
 
+@onready var animation_tree: AnimationTree = $AnimationTree
+
+enum {IDLE,WALK,IDLE1,IDLE2}
+var curAnim = IDLE
+@onready var walk_val: float = 0
+@onready var idle1: float = 0
+@onready var idle2: float = 0
+@export var blend_speed: int = 15
 
 @onready var label_3d: Label3D = $Label3D
 
@@ -18,7 +26,7 @@ extends CharacterBody3D
 @onready var input_synchronizer: InputSynchronizer = $InputSynchronizer
 @onready var sync_timer: Timer = $SyncTimer
 
-@onready var model: Node3D = $Model
+@onready var model: Node3D = $Esqueleto
 
 @onready var collision_shape_3d: CollisionShape3D = $CollisionShape3D
 
@@ -49,8 +57,37 @@ func setup(player_data: Statics.PlayerData) -> void:
 	camera_3d.current = is_multiplayer_authority()
 	if is_multiplayer_authority():
 		sync_timer.start()
+
+func handle_animation(delta: float) -> void:
+	match curAnim:
+		IDLE:
+			walk_val = lerpf(walk_val,0,blend_speed*delta)
+			idle1 = lerpf(idle1,0,blend_speed*delta)
+			idle2 = lerpf(idle2,0,blend_speed*delta)
+		WALK:
+			walk_val = lerpf(walk_val,1.5,blend_speed*delta)
+			idle1 = lerpf(idle1,0,blend_speed*delta)
+			idle2 = lerpf(idle2,0,blend_speed*delta)
+		IDLE1:
+			walk_val = lerpf(walk_val,0,blend_speed*delta)
+			idle1 = lerpf(idle1,1,blend_speed*delta)
+			idle2 = lerpf(idle2,0,blend_speed*delta)
+		IDLE2:
+			walk_val = lerpf(walk_val,0,blend_speed*delta)
+			idle1 = lerpf(idle1,0,blend_speed*delta)
+			idle2 = lerpf(idle2,1,blend_speed*delta)
+	update_tree()
+
+func update_tree() -> void:
+	animation_tree["parameters/Walk/blend_amount"] = walk_val
+	animation_tree["parameters/Idle1/blend_amount"] = idle1
+	animation_tree["parameters/Idle2/blend_amount"] = idle2
+
+		
 func _physics_process(delta: float) -> void:
+	handle_animation(delta)
 	if not is_on_floor():
+		curAnim = IDLE1
 		velocity += get_gravity()*delta
 	if is_on_floor() and input_synchronizer.jump:
 		velocity.y = jump_speed
@@ -67,6 +104,7 @@ func _physics_process(delta: float) -> void:
 	velocity.x = result.x
 	velocity.z = result.y
 	
+	
 	#if not move_input.is_zero_approx():
 	model.rotation.y = lerp_angle(
 		model.rotation.y,
@@ -76,6 +114,12 @@ func _physics_process(delta: float) -> void:
 	
 	move_and_slide()
 
+	if move_input and is_on_floor():
+		curAnim = WALK
+	else:
+		curAnim = IDLE
+
+			
 func _on_sync_timeout() -> void:
 	_sync(global_position, velocity, model.rotation)
 
