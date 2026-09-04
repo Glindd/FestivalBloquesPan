@@ -21,6 +21,7 @@ role = 1
 
 [node name="Game" type="Node" unique_id=369504755]
 script = ExtResource("1_fmbhi")
+multiplayer_test = true
 use_roles = false
 unique_roles = false
 all_roles = false

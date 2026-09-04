@@ -12,6 +12,12 @@ properties/1/replication_mode = 1
 properties/2/path = NodePath("InputSynchronizer:mouse_vector")
 properties/2/spawn = true
 properties/2/replication_mode = 1
+properties/3/path = NodePath("InputSynchronizer:idle1")
+properties/3/spawn = true
+properties/3/replication_mode = 1
+properties/4/path = NodePath("InputSynchronizer:idle2")
+properties/4/spawn = true
+properties/4/replication_mode = 1
 
 [node name="InputSynchronizer" type="MultiplayerSynchronizer" unique_id=4225099]
 replication_config = SubResource("SceneReplicationConfig_4o2dw")

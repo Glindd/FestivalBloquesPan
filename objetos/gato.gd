@@ -9,13 +9,11 @@ extends CharacterBody3D
 @export var spring_min_pitch: float = -50
 @export var spring_max_pitch: float = 50
 
-@onready var animation_tree: AnimationTree = $AnimationTree
+@onready var animation_tree: AnimationTree = $GatoV5_Bone/AnimationTree
 
-enum {IDLE,WALK,IDLE1,IDLE2}
+enum {IDLE,WALK}
 var curAnim = IDLE
 @onready var walk_val: float = 0
-@onready var idle1: float = 0
-@onready var idle2: float = 0
 @export var blend_speed: int = 15
 
 @onready var label_3d: Label3D = $Label3D
@@ -26,8 +24,7 @@ var curAnim = IDLE
 @onready var input_synchronizer: InputSynchronizer = $InputSynchronizer
 @onready var sync_timer: Timer = $SyncTimer
 
-@onready var model: Node3D = $Esqueleto
-
+@onready var model: Node3D = $GatoV5_Bone/Esqueleto
 @onready var collision_shape_3d: CollisionShape3D = $CollisionShape3D
 
 func _ready() -> void:
@@ -62,37 +59,54 @@ func handle_animation(delta: float) -> void:
 	match curAnim:
 		IDLE:
 			walk_val = lerpf(walk_val,0,blend_speed*delta)
-			idle1 = lerpf(idle1,0,blend_speed*delta)
-			idle2 = lerpf(idle2,0,blend_speed*delta)
+			#idle1 = false #lerpf(idle1,0,blend_speed*delta)
+			#idle2 = false #lerpf(idle2,0,blend_speed*delta)
 		WALK:
 			walk_val = lerpf(walk_val,1.5,blend_speed*delta)
-			idle1 = lerpf(idle1,0,blend_speed*delta)
-			idle2 = lerpf(idle2,0,blend_speed*delta)
-		IDLE1:
-			walk_val = lerpf(walk_val,0,blend_speed*delta)
-			idle1 = lerpf(idle1,1,blend_speed*delta)
-			idle2 = lerpf(idle2,0,blend_speed*delta)
-		IDLE2:
-			walk_val = lerpf(walk_val,0,blend_speed*delta)
-			idle1 = lerpf(idle1,0,blend_speed*delta)
-			idle2 = lerpf(idle2,1,blend_speed*delta)
+			#idle1 = false #lerpf(idle1,0,blend_speed*delta)
+			#idle2 = false #lerpf(idle2,0,blend_speed*delta)
+		#IDLE1:
+			#walk_val = lerpf(walk_val,0,blend_speed*delta)
+			#idle1 = true #lerpf(idle1,1,blend_speed*delta)
+			#idle2 = false #lerpf(idle2,0,blend_speed*delta)
+		#IDLE2:
+			#walk_val = lerpf(walk_val,0,blend_speed*delta)
+			#idle1 = false #lerpf(idle1,0,blend_speed*delta)
+			#idle2 = true #lerpf(idle2,1,blend_speed*delta)
 	update_tree()
 
 func update_tree() -> void:
 	animation_tree["parameters/Walk/blend_amount"] = walk_val
-	animation_tree["parameters/Idle1/blend_amount"] = idle1
-	animation_tree["parameters/Idle2/blend_amount"] = idle2
+	#animation_tree["parameters/Idle1/request"] = idle1
+	#animation_tree["parameters/Idle2/request"] = idle2
 
 		
 func _physics_process(delta: float) -> void:
-	handle_animation(delta)
 	if not is_on_floor():
-		curAnim = IDLE1
 		velocity += get_gravity()*delta
+	# Controlador de emotikones con k y l
+	'''
+	elif is_on_floor() and input_synchronizer.idle1:
+		curAnim = IDLE1
+		#await get_tree().create_timer(4.5).timeout
+		animation_tree.set("parameters/Idle2/request", AnimationNodeOneShot.ONE_SHOT_REQUEST_FIRE)
+		input_synchronizer.idle2 = false
+	elif is_on_floor() and input_synchronizer.idle2:
+		curAnim = IDLE2
+		#await get_tree().create_timer(3.5).timeout
+		animation_tree.set("parameters/Idle1/request", AnimationNodeOneShot.ONE_SHOT_REQUEST_FIRE)
+		input_synchronizer.idle2 = false
+	'''
+	if not input_synchronizer.move_input.is_zero_approx() and is_on_floor():
+		curAnim = WALK
+	else:
+		curAnim = IDLE
+		
 	if is_on_floor() and input_synchronizer.jump:
 		velocity.y = jump_speed
 		input_synchronizer.jump = false
 		
+	handle_animation(delta)
 	var move_input: Vector2 = input_synchronizer.move_input
 	
 	var direction: Vector3 = model.transform.basis * Vector3(move_input.x, 0, move_input.y)
@@ -111,21 +125,20 @@ func _physics_process(delta: float) -> void:
 		spring_arm_3d.rotation.y,
 		0.1
 	)
-	
+	collision_shape_3d.rotation = model.rotation
 	move_and_slide()
 
-	if move_input and is_on_floor():
-		curAnim = WALK
-	else:
-		curAnim = IDLE
+	
 
 			
 func _on_sync_timeout() -> void:
-	_sync(global_position, velocity, model.rotation)
+	_sync(global_position, velocity)
+	_sync2(spring_arm_3d.rotation)
 
-func _sync(pos: Vector3, vel: Vector3, rot: Vector3) -> void:
+func _sync(pos: Vector3, vel: Vector3) -> void:
 	global_position = global_position.lerp(pos, 0.5)
 	velocity = velocity.lerp(vel, 0.5)
-	# model.rotation = model.rotation.lerp(rot, 0.5)
-	# spring_arm_3d.rotation = spring_arm_3d.rotation.lerp(rot, 0.5)
+	
+func _sync2(rot:Vector3) -> void:
+	spring_arm_3d.rotation = spring_arm_3d.rotation.lerp(rot, 1)
 	
