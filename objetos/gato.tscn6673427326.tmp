@@ -66,6 +66,11 @@ script = ExtResource("1_jmo73")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.19947775, 0)
 shape = SubResource("BoxShape3D_g4v7s")
 
+[node name="Label3D" type="Label3D" parent="." unique_id=282183671]
+transform = Transform3D(-1.2064343e-07, 0, 2.76, 0, 2.76, 0, -2.76, 0, -1.2064343e-07, 0, 3.43, -2.6589134)
+billboard = 2
+text = "miau"
+
 [node name="InputSynchronizer" parent="." unique_id=4225099 instance=ExtResource("2_nxguc")]
 
 [node name="SyncTimer" type="Timer" parent="." unique_id=323297908]
@@ -107,11 +112,6 @@ bones/28/position = Vector3(0.5417589, 0.9829085, -0.27190456)
 bones/28/rotation = Quaternion(0.56518203, 0.58557755, -0.54899293, 0.19046022)
 bones/29/rotation = Quaternion(0.050415188, -0.09814801, 0.17652057, 0.9780929)
 bones/30/rotation = Quaternion(-0.2157936, 8.922985e-08, -0.03458854, 0.9758262)
-
-[node name="Label3D" type="Label3D" parent="GatoV5_Bone/Esqueleto/Skeleton3D/Cube" parent_id_path=PackedInt32Array(596813472, 1841703646) index="0" unique_id=282183671]
-transform = Transform3D(2.7599998, 0, -1.4210855e-14, 0, 2.7599998, 0, 1.4210855e-14, 0, 2.7599998, 3.8063977, 2.936767, 0.117203265)
-billboard = 2
-text = "miau"
 
 [node name="AnimationTree" type="AnimationTree" parent="GatoV5_Bone" unique_id=1247529766]
 tree_root = SubResource("AnimationNodeBlendTree_s6x3c")

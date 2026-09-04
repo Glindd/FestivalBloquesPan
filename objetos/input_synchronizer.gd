@@ -17,10 +17,6 @@ func _physics_process(delta: float) -> void:
 	move_input = Input.get_vector("move_left", "move_right", "move_forward","move_backward")
 	if Input.is_action_just_pressed("correr"):
 		broadcast_correr.rpc()
-	if Input.is_action_just_pressed("Idle1"):
-		broadcast_idle1.rpc()
-	if Input.is_action_just_pressed("Idle2"):
-		broadcast_idle2.rpc()
 	if Input.is_action_just_pressed("jump"):
 		broadcast_jump.rpc()
 
@@ -35,11 +31,9 @@ func _unhandled_input(event: InputEvent) -> void:
 func broadcast_correr() -> void:
 	correr = not correr
 	if correr:
-		print("corre")
 		move_speed = lerpf(move_speed,4,0.3)
 	else:
 		move_speed = lerpf(move_speed,1,0.9)
-		print("no corre")
 
 
 @rpc("call_local")

@@ -1,3 +1,4 @@
+class_name Player
 extends CharacterBody3D
 
 @export var jump_speed: float = 6
@@ -8,6 +9,8 @@ extends CharacterBody3D
 @export var spring_min_pitch: float = -50
 @export var spring_max_pitch: float = 50
 
+@export var is_emoteando: bool = false
+
 @onready var animation_player: AnimationPlayer = $GatoV5_Bone/AnimationPlayer
 @onready var animation_tree: AnimationTree = $GatoV5_Bone/AnimationTree
 
@@ -17,7 +20,8 @@ var curAnim = IDLE
 @onready var run: float = 0
 @export var blend_speed: int = 15
 
-@onready var label_3d: Label3D = $Label3D
+@onready var label_3d: Label3D = $GatoV5_Bone/Esqueleto/Skeleton3D/Cube/Label3D
+
 
 @onready var spring_arm_3d: SpringArm3D = $SpringArm3D
 @onready var camera_3d: Camera3D = $SpringArm3D/Camera3D
@@ -31,6 +35,13 @@ var curAnim = IDLE
 func _ready() -> void:
 	sync_timer.timeout.connect(_on_sync_timeout)
 
+	var player_data: Statics.PlayerData = Game.instance.get_player(get_multiplayer_authority())
+	label_3d.text = player_data.name
+	label_3d.visible = not is_multiplayer_authority()
+	camera_3d.current = is_multiplayer_authority()
+	if is_multiplayer_authority():
+		sync_timer.start()
+
 func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("test"):
 		pass
@@ -38,6 +49,10 @@ func _input(event: InputEvent) -> void:
 func _unhandled_input(event: InputEvent) -> void:
 	if not is_multiplayer_authority():
 		return
+	if event.is_action_pressed("Idle1") and not is_emoteando:
+		trigger_emotiza1.rpc()
+	if event.is_action_pressed("Idle2") and not is_emoteando:
+		trigger_emotiza2.rpc()
 	var mouse_motion: InputEventMouseMotion = event as InputEventMouseMotion
 	if mouse_motion:
 		spring_arm_3d.rotation.y = spring_arm_3d.rotation.y - input_synchronizer.mouse_vector.x * mouse_sensitivy
@@ -47,15 +62,8 @@ func _unhandled_input(event: InputEvent) -> void:
 			deg_to_rad(camera_max_pitch)
 		)
 
-func setup(player_data: Statics.PlayerData) -> void:
-	label_3d.text = player_data.name
-	set_multiplayer_authority(player_data.id)  
-	name = str(player_data.id)
-	label_3d.visible = not is_multiplayer_authority()
-	camera_3d.current = is_multiplayer_authority()
-	if is_multiplayer_authority():
-		sync_timer.start()
-
+#func setup(player_data: Statics.PlayerData) -> void:
+	
 func handle_animation(delta: float) -> void:
 	match curAnim:
 		IDLE:
@@ -71,14 +79,6 @@ func handle_animation(delta: float) -> void:
 		#RUN:
 			#walk_val = lerpf(walk_val,0,blend_speed*delta)
 			#run = lerpf(run,8,blend_speed*delta)
-		#IDLE1:
-			#walk_val = lerpf(walk_val,0,blend_speed*delta)
-			#idle1 = true #lerpf(idle1,1,blend_speed*delta)
-			#idle2 = false #lerpf(idle2,0,blend_speed*delta)
-		#IDLE2:
-			#walk_val = lerpf(walk_val,0,blend_speed*delta)
-			#idle1 = false #lerpf(idle1,0,blend_speed*delta)
-			#idle2 = true #lerpf(idle2,1,blend_speed*delta)
 	update_tree()
 
 func update_tree() -> void:
@@ -86,24 +86,27 @@ func update_tree() -> void:
 	#animation_tree["parameters/Run/blend_amount"] = run
 	#animation_tree["parameters/Idle1/request"] = idle1
 	#animation_tree["parameters/Idle2/request"] = idle2
-
 		
 func _physics_process(delta: float) -> void:
+	
+	if is_emoteando:
+		velocity.x = move_toward(velocity.x,0,acceleration)
+		velocity.z = move_toward(velocity.z,0,acceleration)
+		move_and_slide()
+		return
 	if not is_on_floor():
 		velocity += get_gravity()*delta
-	# Controlador de emotikones con k y l
-	'''
-	elif is_on_floor() and input_synchronizer.idle1:
-		curAnim = IDLE1
-		#await get_tree().create_timer(4.5).timeout
-		animation_tree.set("parameters/Idle2/request", AnimationNodeOneShot.ONE_SHOT_REQUEST_FIRE)
-		input_synchronizer.idle2 = false
-	elif is_on_floor() and input_synchronizer.idle2:
-		curAnim = IDLE2
-		#await get_tree().create_timer(3.5).timeout
-		animation_tree.set("parameters/Idle1/request", AnimationNodeOneShot.ONE_SHOT_REQUEST_FIRE)
-		input_synchronizer.idle2 = false
-	'''
+		
+	animation_player.speed_scale = max(int(input_synchronizer.move_speed * 0.75), 1)
+
+	
+	model.rotation.y = lerp_angle(
+		model.rotation.y,
+		spring_arm_3d.rotation.y,
+		0.1
+	)
+	collision_shape_3d.rotation = model.rotation
+	
 	#elif not input_synchronizer.move_input.is_zero_approx() and is_on_floor() and input_synchronizer.move_speed <= 4:
 		#curAnim = RUN
 	if not input_synchronizer.move_input.is_zero_approx() and is_on_floor():
@@ -111,10 +114,10 @@ func _physics_process(delta: float) -> void:
 	else:
 		curAnim = IDLE
 
-	animation_player.speed_scale = max(int(input_synchronizer.move_speed * 0.75), 1)
-		
-	if is_on_floor() and input_synchronizer.jump:
-		velocity.y = jump_speed
+	
+	if input_synchronizer.jump:
+		if is_on_floor():
+			velocity.y = jump_speed
 		input_synchronizer.jump = false
 		
 	handle_animation(delta)
@@ -131,17 +134,24 @@ func _physics_process(delta: float) -> void:
 	
 	
 	#if not move_input.is_zero_approx():
-	model.rotation.y = lerp_angle(
-		model.rotation.y,
-		spring_arm_3d.rotation.y,
-		0.1
-	)
-	collision_shape_3d.rotation = model.rotation
+	
 	move_and_slide()
 
-	
 
-			
+
+
+@rpc("any_peer","call_local","reliable")
+func trigger_emotiza1() -> void:
+	is_emoteando = true
+	animation_tree.set("parameters/Idle1/request", AnimationNodeOneShot.ONE_SHOT_REQUEST_FIRE)
+	get_tree().create_timer(4.5).timeout.connect(func(): is_emoteando = false)
+
+@rpc("any_peer","call_local","reliable")
+func trigger_emotiza2() -> void:
+	is_emoteando = true
+	animation_tree.set("parameters/Idle2/request", AnimationNodeOneShot.ONE_SHOT_REQUEST_FIRE)
+	get_tree().create_timer(3.5).timeout.connect(func(): is_emoteando = false)
+	
 func _on_sync_timeout() -> void:
 	_sync.rpc(global_position, velocity)
 	_sync2(spring_arm_3d.rotation)
