@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://upovdypmx8qk"]
 
-[ext_resource type="Texture2D" uid="uid://tw8t38ns0seh" path="res://icon.svg" id="1_qnl3r"]
+[ext_resource type="Texture2D" uid="uid://dsjgybe74k6q1" path="res://Texturas/Pasto.jpg" id="1_qnl3r"]
 
 [sub_resource type="WorldBoundaryShape3D" id="WorldBoundaryShape3D_g4v7s"]
 

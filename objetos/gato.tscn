@@ -5,7 +5,7 @@
 [ext_resource type="PackedScene" uid="uid://bmng82ys0g0x7" path="res://models/GatoV5_Bone.glb" id="3_5vjbb"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_g4v7s"]
-size = Vector3(2.1755986, 2.0257494, 4.1993713)
+size = Vector3(2.1755986, 2.3891277, 4.1993713)
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_nxguc"]
 properties/0/path = NodePath("SpringArm3D:rotation")
@@ -21,6 +21,9 @@ animation = &"Esqueleto_acción_002"
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_q6ihj"]
 animation = &"Esqueleto_acción_001"
 
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_7fi1i"]
+animation = &"Esqueleto_acción"
+
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_wjo8k"]
 animation = &"Esqueleto_acción_003"
 
@@ -28,32 +31,39 @@ animation = &"Esqueleto_acción_003"
 
 [sub_resource type="AnimationNodeOneShot" id="AnimationNodeOneShot_a86pc"]
 
+[sub_resource type="AnimationNodeBlend2" id="AnimationNodeBlend2_lmid5"]
+
 [sub_resource type="AnimationNodeBlend2" id="AnimationNodeBlend2_3and3"]
 
 [sub_resource type="AnimationNodeBlendTree" id="AnimationNodeBlendTree_s6x3c"]
-graph_offset = Vector2(-333.39233, -16.733337)
+graph_offset = Vector2(-738.8078, -2.4819183)
+nodes/output/position = Vector2(660, 120)
 nodes/Idle/node = SubResource("AnimationNodeAnimation_wjo8k")
 nodes/Idle/position = Vector2(-740, 160)
 nodes/Walk/node = SubResource("AnimationNodeBlend2_3and3")
 nodes/Walk/position = Vector2(-420, 120)
 nodes/Idle1/node = SubResource("AnimationNodeOneShot_5vjbb")
-nodes/Idle1/position = Vector2(-180, 100)
+nodes/Idle1/position = Vector2(260, 100)
 "nodes/Animation 4/node" = SubResource("AnimationNodeAnimation_q6ihj")
-"nodes/Animation 4/position" = Vector2(-180, 400)
+"nodes/Animation 4/position" = Vector2(260, 400)
 "nodes/Animation 2/node" = SubResource("AnimationNodeAnimation_5vjbb")
 "nodes/Animation 2/position" = Vector2(-700, 380)
 "nodes/Animation 3/node" = SubResource("AnimationNodeAnimation_a86pc")
-"nodes/Animation 3/position" = Vector2(-420, 400)
+"nodes/Animation 3/position" = Vector2(20, 400)
 nodes/Idle2/node = SubResource("AnimationNodeOneShot_a86pc")
-nodes/Idle2/position = Vector2(80, 140)
-node_connections = [&"output", 0, &"Idle2", &"Walk", 0, &"Idle", &"Walk", 1, &"Animation 2", &"Idle1", 0, &"Walk", &"Idle1", 1, &"Animation 3", &"Idle2", 0, &"Idle1", &"Idle2", 1, &"Animation 4"]
+nodes/Idle2/position = Vector2(520, 140)
+nodes/Run/node = SubResource("AnimationNodeBlend2_lmid5")
+nodes/Run/position = Vector2(-140, 100)
+nodes/Animation/node = SubResource("AnimationNodeAnimation_7fi1i")
+nodes/Animation/position = Vector2(-400, 460)
+node_connections = [&"output", 0, &"Idle2", &"Walk", 0, &"Idle", &"Walk", 1, &"Animation 2", &"Idle1", 0, &"Run", &"Idle1", 1, &"Animation 3", &"Idle2", 0, &"Idle1", &"Idle2", 1, &"Animation 4", &"Run", 0, &"Walk", &"Run", 1, &"Animation"]
 
 [node name="Gato" type="CharacterBody3D" unique_id=620659913]
 transform = Transform3D(0.155, 0, 0, 0, 0.155, 0, 0, 0, 0.155, 0, 0, 0)
 script = ExtResource("1_jmo73")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=964144500]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.3811669, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.19947775, 0)
 shape = SubResource("BoxShape3D_g4v7s")
 
 [node name="Label3D" type="Label3D" parent="." unique_id=282183671]
@@ -114,5 +124,6 @@ parameters/Idle1/request = 0
 parameters/Idle2/active = false
 parameters/Idle2/internal_active = false
 parameters/Idle2/request = 0
+parameters/Run/blend_amount = 0.0
 
 [editable path="GatoV5_Bone"]

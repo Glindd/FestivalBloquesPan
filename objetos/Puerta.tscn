@@ -1,8 +1,16 @@
 [gd_scene format=3 uid="uid://bv25gl45o5yyl"]
 
+[ext_resource type="Texture2D" uid="uid://c5bpse006v17q" path="res://Texturas/Madera.jpg" id="1_7s030"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_3v4bu"]
+albedo_texture = ExtResource("1_7s030")
+
 [sub_resource type="SphereMesh" id="SphereMesh_g4v7s"]
 radius = 0.1
 height = 0.2
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_5s1c2"]
+albedo_texture = ExtResource("1_7s030")
 
 [sub_resource type="BoxMesh" id="BoxMesh_g4v7s"]
 size = Vector3(0.11914648, 1.8840332, 1)
@@ -18,11 +26,13 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.437904, 0, 0.49764413)
 
 [node name="MangoMesh" type="MeshInstance3D" parent="Puerta" unique_id=1381773568]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.32530552, 0.60241985, 0.3423323)
+material_override = SubResource("StandardMaterial3D_3v4bu")
 mesh = SubResource("SphereMesh_g4v7s")
 skeleton = NodePath("../..")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="Puerta" unique_id=37166979]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.44042677, 0.4420166, 0)
+material_override = SubResource("StandardMaterial3D_5s1c2")
 mesh = SubResource("BoxMesh_g4v7s")
 skeleton = NodePath("../..")
 

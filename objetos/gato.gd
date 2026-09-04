@@ -1,6 +1,5 @@
 extends CharacterBody3D
 
-@export var move_speed: float = 1
 @export var jump_speed: float = 6
 @export var acceleration: float = 5
 @export var mouse_sensitivy: float = 0.005
@@ -9,11 +8,13 @@ extends CharacterBody3D
 @export var spring_min_pitch: float = -50
 @export var spring_max_pitch: float = 50
 
+@onready var animation_player: AnimationPlayer = $GatoV5_Bone/AnimationPlayer
 @onready var animation_tree: AnimationTree = $GatoV5_Bone/AnimationTree
 
-enum {IDLE,WALK}
+enum {IDLE,WALK,RUN}
 var curAnim = IDLE
 @onready var walk_val: float = 0
+@onready var run: float = 0
 @export var blend_speed: int = 15
 
 @onready var label_3d: Label3D = $Label3D
@@ -59,12 +60,17 @@ func handle_animation(delta: float) -> void:
 	match curAnim:
 		IDLE:
 			walk_val = lerpf(walk_val,0,blend_speed*delta)
+			run = lerpf(run,0,blend_speed*delta)
 			#idle1 = false #lerpf(idle1,0,blend_speed*delta)
 			#idle2 = false #lerpf(idle2,0,blend_speed*delta)
 		WALK:
 			walk_val = lerpf(walk_val,1.5,blend_speed*delta)
+			run = lerpf(walk_val,0,blend_speed*delta)
 			#idle1 = false #lerpf(idle1,0,blend_speed*delta)
 			#idle2 = false #lerpf(idle2,0,blend_speed*delta)
+		#RUN:
+			#walk_val = lerpf(walk_val,0,blend_speed*delta)
+			#run = lerpf(run,8,blend_speed*delta)
 		#IDLE1:
 			#walk_val = lerpf(walk_val,0,blend_speed*delta)
 			#idle1 = true #lerpf(idle1,1,blend_speed*delta)
@@ -77,6 +83,7 @@ func handle_animation(delta: float) -> void:
 
 func update_tree() -> void:
 	animation_tree["parameters/Walk/blend_amount"] = walk_val
+	#animation_tree["parameters/Run/blend_amount"] = run
 	#animation_tree["parameters/Idle1/request"] = idle1
 	#animation_tree["parameters/Idle2/request"] = idle2
 
@@ -97,10 +104,14 @@ func _physics_process(delta: float) -> void:
 		animation_tree.set("parameters/Idle1/request", AnimationNodeOneShot.ONE_SHOT_REQUEST_FIRE)
 		input_synchronizer.idle2 = false
 	'''
+	#elif not input_synchronizer.move_input.is_zero_approx() and is_on_floor() and input_synchronizer.move_speed <= 4:
+		#curAnim = RUN
 	if not input_synchronizer.move_input.is_zero_approx() and is_on_floor():
 		curAnim = WALK
 	else:
 		curAnim = IDLE
+
+	animation_player.speed_scale = max(int(input_synchronizer.move_speed * 0.75), 1)
 		
 	if is_on_floor() and input_synchronizer.jump:
 		velocity.y = jump_speed
@@ -110,7 +121,7 @@ func _physics_process(delta: float) -> void:
 	var move_input: Vector2 = input_synchronizer.move_input
 	
 	var direction: Vector3 = model.transform.basis * Vector3(move_input.x, 0, move_input.y)
-	var target: Vector2 = Vector2(direction.x, direction.z) * move_speed
+	var target: Vector2 = Vector2(direction.x, direction.z) * input_synchronizer.move_speed
 	
 	var current: Vector2 = Vector2(velocity.x, velocity.z)
 	var result: Vector2 = current.move_toward(target, acceleration * delta)
@@ -132,9 +143,10 @@ func _physics_process(delta: float) -> void:
 
 			
 func _on_sync_timeout() -> void:
-	_sync(global_position, velocity)
+	_sync.rpc(global_position, velocity)
 	_sync2(spring_arm_3d.rotation)
 
+@rpc("call_local", "unreliable")
 func _sync(pos: Vector3, vel: Vector3) -> void:
 	global_position = global_position.lerp(pos, 0.5)
 	velocity = velocity.lerp(vel, 0.5)

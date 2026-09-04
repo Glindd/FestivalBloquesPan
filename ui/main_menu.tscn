@@ -3,6 +3,7 @@
 [ext_resource type="Theme" uid="uid://bwgdrcgopd0s1" path="res://lobby/lobby_theme.tres" id="1_3qnx1"]
 [ext_resource type="Script" uid="uid://cnbk17iq1x68f" path="res://ui/main_menu.gd" id="2_p6ygj"]
 [ext_resource type="Texture2D" uid="uid://tw8t38ns0seh" path="res://icon.svg" id="2_xllby"]
+[ext_resource type="Texture2D" uid="uid://c5bpse006v17q" path="res://Texturas/Madera.jpg" id="3_rmr83"]
 
 [node name="MainMenu" type="Control" unique_id=90432305]
 layout_mode = 3
@@ -13,6 +14,20 @@ grow_horizontal = 2
 grow_vertical = 2
 theme = ExtResource("1_3qnx1")
 script = ExtResource("2_p6ygj")
+
+[node name="PanelContainer" type="PanelContainer" parent="." unique_id=1594803153]
+custom_minimum_size = Vector2(0, 24.795)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="TextureRect" type="TextureRect" parent="PanelContainer" unique_id=1473590344]
+propagate_maximum_size = true
+layout_mode = 2
+texture = ExtResource("3_rmr83")
 
 [node name="MarginContainer" type="MarginContainer" parent="." unique_id=953531144]
 layout_mode = 1
@@ -89,4 +104,5 @@ grow_vertical = 2
 [node name="Label" type="Label" parent="MarginContainer3" unique_id=1435848050]
 layout_mode = 2
 theme_type_variation = &"Title"
+theme_override_colors/font_color = Color(0.14044744, 0.14044744, 0.14044744, 1)
 text = "Panacats"

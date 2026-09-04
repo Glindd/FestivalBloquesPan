@@ -3,13 +3,27 @@
 [ext_resource type="PackedScene" uid="uid://da70bkb27htgh" path="res://objetos/gato.tscn" id="1_1m2tr"]
 [ext_resource type="Script" uid="uid://r6jml52b7vrp" path="res://scripts/test_general(Principal_Game).gd" id="1_sqgaj"]
 [ext_resource type="PackedScene" uid="uid://upovdypmx8qk" path="res://objetos/SueloTest.tscn" id="2_sqgaj"]
+[ext_resource type="PackedScene" uid="uid://bv25gl45o5yyl" path="res://objetos/Puerta.tscn" id="4_8u7e0"]
+[ext_resource type="PackedScene" uid="uid://boluj44ie7tx6" path="res://objetos/Faro.tscn" id="5_0ckwa"]
+
+[sub_resource type="Environment" id="Environment_g4v7s"]
+background_mode = 1
+background_color = Color(0.18991381, 0.25584525, 0.31440324, 1)
+background_energy_multiplier = 1.06
+ambient_light_source = 3
+ambient_light_color = Color(0.89879423, 0.72054744, 0.45372504, 1)
 
 [node name="TestGeneral" type="Node3D" unique_id=1047735781]
 script = ExtResource("1_sqgaj")
 player_scene = ExtResource("1_1m2tr")
 
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=835908915]
+environment = SubResource("Environment_g4v7s")
+
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=884808267]
-transform = Transform3D(-0.8660254, -0.43301278, 0.25, 0, 0.49999997, 0.86602545, -0.50000006, 0.75, -0.43301266, 0, 12.060363, 0)
+transform = Transform3D(-0.70805794, -0.61154747, 0.35307705, -0.41080558, 0.76341075, 0.49844012, -0.5743627, 0.20787856, -0.7917663, 0, 8.90274, -6.684601)
+light_energy = 0.099
+light_indirect_energy = 0.536
 shadow_enabled = true
 
 [node name="StaticBody3D" parent="." unique_id=766345700 instance=ExtResource("2_sqgaj")]
@@ -27,3 +41,15 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.84555864, 0.06331003, -1.2
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.9976437, 0.06331003, -0.05552101)
 
 [node name="Players" type="Node3D" parent="." unique_id=971010479]
+
+[node name="Nodo3D" parent="." unique_id=1189578759 instance=ExtResource("4_8u7e0")]
+transform = Transform3D(-0.0806146, 0, 0.99674535, 0, 1, 0, -0.99674535, 0, -0.0806146, 0.08407307, 0.5, 4.4613867)
+
+[node name="Faro" parent="." unique_id=405263412 instance=ExtResource("5_0ckwa")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5924287, 0.88699675, 1.1162629)
+
+[node name="Faro2" parent="." unique_id=1440369756 instance=ExtResource("5_0ckwa")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.224876, 0.9226961, -0.73167133)
+
+[node name="Faro3" parent="." unique_id=29075669 instance=ExtResource("5_0ckwa")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.7967007, 0.87751675, 3.524011)
