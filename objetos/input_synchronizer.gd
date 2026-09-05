@@ -12,6 +12,8 @@ extends MultiplayerSynchronizer
 @export var correr: bool = false
 @export var move_speed: float = 1
 
+
+
 func _physics_process(_delta: float) -> void:
 	if not is_multiplayer_authority():
 		return

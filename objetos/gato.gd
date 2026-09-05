@@ -2,8 +2,8 @@ class_name Player
 extends CharacterBody3D
 
 @export var speed: float = 1
-@export var jump_speed: float = 6
-@export var acceleration: float = 5
+@export var jump_speed: float = 3
+@export var acceleration: float = 6
 @export var mouse_sensitivy: float = 0.005
 @export var camera_min_pitch: float = -20
 @export var camera_max_pitch: float = 30
@@ -65,10 +65,12 @@ func _input(event: InputEvent) -> void:
 func _unhandled_input(event: InputEvent) -> void:
 	if not is_multiplayer_authority():
 		return
+	#K y L botones
 	if event.is_action_pressed("Idle1") and not is_emoteando:
 		trigger_emotiza1.rpc()
 	if event.is_action_pressed("Idle2") and not is_emoteando:
 		trigger_emotiza2.rpc()
+		
 	var mouse_motion: InputEventMouseMotion = event as InputEventMouseMotion
 	if mouse_motion:
 		spring_arm_3d.rotation.y = spring_arm_3d.rotation.y - input_synchronizer.mouse_vector.x * mouse_sensitivy
@@ -92,16 +94,17 @@ func handle_animation(delta: float) -> void:
 		RUN:
 			walk_val = lerpf(walk_val,0,blend_speed*delta)
 			run = lerpf(run,1.5,blend_speed*delta)
+
 	match curRot:
 		R:
-			intensidadL = lerpf(intensidadL,0,blend_speed*delta)
-			intensidadR = lerpf(intensidadR,fuerza_giro,blend_speed*delta)
+			intensidadL = lerpf(intensidadL,0,blend_speed*delta/3)
+			intensidadR = lerpf(intensidadR,fuerza_giro,blend_speed*delta/3)
 		L:
-			intensidadL = lerpf(intensidadL,fuerza_giro,blend_speed*delta)
-			intensidadR = lerpf(intensidadR,0,blend_speed*delta)
+			intensidadL = lerpf(intensidadL,fuerza_giro,blend_speed*delta/3)
+			intensidadR = lerpf(intensidadR,0,blend_speed*delta/3)
 		C:
-			intensidadL = lerpf(intensidadL,0,blend_speed*delta)
-			intensidadR = lerpf(intensidadR,0,blend_speed*delta)
+			intensidadL = lerpf(intensidadL,0,blend_speed*delta/3)
+			intensidadR = lerpf(intensidadR,0,blend_speed*delta/3)
 	update_tree()
 
 func update_tree() -> void:
@@ -111,7 +114,7 @@ func update_tree() -> void:
 	animation_tree["parameters/RotandoL/add_amount"] = intensidadL
 		
 func _physics_process(delta: float) -> void:
-	speed = lerpf(speed,input_synchronizer.move_speed,0.2)
+	speed = lerpf(speed,input_synchronizer.move_speed,0.05)
 	if is_emoteando:
 		velocity.x = move_toward(velocity.x,0,acceleration)
 		velocity.z = move_toward(velocity.z,0,acceleration)
@@ -120,18 +123,23 @@ func _physics_process(delta: float) -> void:
 		
 	if not is_on_floor():
 		velocity += get_gravity()*delta
-	animation_player.speed_scale = max(int(input_synchronizer.move_speed * 0.75), 1)
+	animation_player.speed_scale = max(int(speed * 1), 1)
 	
 	if not is_emoteando:
+		
+		#Controlador de la animacion de giro del gato
+		
 		var dif_angulo: float = angle_difference(model.rotation.y, spring_arm_3d.rotation.y)
-		var umbral_giro: float = 0.05
-		fuerza_giro = clampf(absf(dif_angulo) / (PI / 2.0), 0.0, 1.0)
+		var umbral_giro: float = 0.005
+		fuerza_giro = lerpf(fuerza_giro,clampf(absf(dif_angulo) / (PI/4), 0, 1.5),0.2)
 		if dif_angulo > umbral_giro:
 			curRot = R
 		elif dif_angulo < -umbral_giro:
 			curRot = L
 		else:
 			curRot = C
+			
+		#El giro del gato
 		model.rotation.y = lerp_angle(
 			model.rotation.y,
 			spring_arm_3d.rotation.y,
@@ -158,7 +166,7 @@ func _physics_process(delta: float) -> void:
 	
 	var move_input: Vector2 = input_synchronizer.move_input
 	var direction: Vector3 = model.transform.basis * Vector3(move_input.x, 0, move_input.y)
-	var target: Vector2 = Vector2(direction.x, direction.z) * input_synchronizer.move_speed
+	var target: Vector2 = Vector2(direction.x, direction.z) * speed
 	var current: Vector2 = Vector2(velocity.x, velocity.z)
 	var result: Vector2 = current.move_toward(target, acceleration * delta)
 	velocity.x = result.x
