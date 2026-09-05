@@ -1,0 +1,37 @@
+[gd_scene format=3 uid="uid://di6skkic6oys7"]
+
+[ext_resource type="Script" uid="uid://c6jykph6llvh5" path="res://hud/hud.gd" id="1_6ca3a"]
+
+[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_57qmd"]
+
+[node name="HUD" type="Control" unique_id=1513608797]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("1_6ca3a")
+
+[node name="Dinero" type="Label" parent="." unique_id=1518944036]
+layout_mode = 0
+offset_left = 71.0
+offset_top = 37.0
+offset_right = 111.0
+offset_bottom = 60.0
+text = "300"
+
+[node name="Tiempo" type="Label" parent="." unique_id=280308262]
+layout_mode = 0
+offset_left = 314.0
+offset_top = 38.0
+offset_right = 354.0
+offset_bottom = 61.0
+text = "3:59"
+
+[node name="BarraTrabajo" type="TextureProgressBar" parent="." unique_id=114695325]
+layout_mode = 0
+offset_left = 490.0
+offset_top = 645.0
+offset_right = 809.0
+offset_bottom = 685.0
+nine_patch_stretch = true
+texture_progress = SubResource("PlaceholderTexture2D_57qmd")

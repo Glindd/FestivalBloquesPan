@@ -1,6 +1,9 @@
+class_name ObjetoInteractuable
 extends Node3D
 
 @onready var interaccion_area: InteraccionArea = $Interaccion_area
+
+@export var tiempo_accion: float = 3
 
 func _ready() -> void:
 	interaccion_area.interact.connect(_request_interaction)

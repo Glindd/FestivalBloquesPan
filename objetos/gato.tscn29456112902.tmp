@@ -83,7 +83,7 @@ graph_offset = Vector2(5.35849, 10)
 [sub_resource type="AnimationNodeBlend2" id="AnimationNodeBlend2_3and3"]
 
 [sub_resource type="AnimationNodeBlendTree" id="AnimationNodeBlendTree_s6x3c"]
-graph_offset = Vector2(-1150.1509, -364.3026)
+graph_offset = Vector2(-1000.1509, -153.30261)
 nodes/output/position = Vector2(920, 140)
 nodes/Idle/node = SubResource("AnimationNodeAnimation_wjo8k")
 nodes/Idle/position = Vector2(-1240, -20)
@@ -144,10 +144,10 @@ replication_config = SubResource("SceneReplicationConfig_nxguc")
 [node name="GatoV5_Bone" parent="." unique_id=596813472 instance=ExtResource("3_5vjbb")]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 0, 0, 0)
 
-[node name="Esqueleto" parent="GatoV5_Bone" index="0" unique_id=135658150]
+[node name="Esqueleto" parent="GatoV5_Bone" index="0" unique_id=1425562879]
 transform = Transform3D(0.99999994, 0, 0, 0, 1, 0, 0, 0, 0.99999994, 0.023801684, 0.49323237, -0.00069081783)
 
-[node name="Skeleton3D" parent="GatoV5_Bone/Esqueleto" index="0" unique_id=761139006]
+[node name="Skeleton3D" parent="GatoV5_Bone/Esqueleto" index="0" unique_id=250504604]
 transform = Transform3D(1, 0, 0, 0, 0.99999994, 0, 0, 0, 1, -1.1712862, 0, -5.122274e-08)
 bones/0/position = Vector3(-0.26720694, 0.06961281, 0.047438677)
 bones/0/rotation = Quaternion(-0.0411427, 0.06844771, -0.74695843, 0.6600571)
@@ -169,7 +169,7 @@ bones/28/rotation = Quaternion(0.56518203, 0.58557755, -0.54899293, 0.19046022)
 bones/29/rotation = Quaternion(0.050415188, -0.09814801, 0.17652057, 0.9780929)
 bones/30/rotation = Quaternion(-0.2157936, 8.922985e-08, -0.03458854, 0.9758262)
 
-[node name="Label3D" type="Label3D" parent="GatoV5_Bone/Esqueleto/Skeleton3D/Cube" parent_id_path=PackedInt32Array(596813472, 1500434531) index="0" unique_id=282183671]
+[node name="Label3D" type="Label3D" parent="GatoV5_Bone/Esqueleto/Skeleton3D/Cube" parent_id_path=PackedInt32Array(596813472, 275293982) index="0" unique_id=282183671]
 transform = Transform3D(2.7599998, 0, -1.4210855e-14, 0, 2.7599998, 0, 1.4210855e-14, 0, 2.7599998, 3.8063977, 2.936767, 0.117203265)
 visible = false
 billboard = 2

@@ -8,10 +8,11 @@ extends MultiplayerSynchronizer
 @export var mouse_vector: Vector2
 @export var idle1: bool
 @export var idle2: bool
+#export var E: bool
 @export var correr: bool = false
 @export var move_speed: float = 1
 
-func _physics_process(delta: float) -> void:
+func _physics_process(_delta: float) -> void:
 	if not is_multiplayer_authority():
 		return
 	move_input = Input.get_vector("move_left", "move_right", "move_forward","move_backward")
@@ -31,10 +32,13 @@ func _unhandled_input(event: InputEvent) -> void:
 func broadcast_correr() -> void:
 	correr = not correr
 	if correr:
-		move_speed = lerpf(move_speed,4,0.3)
+		move_speed = 4
 	else:
-		move_speed = lerpf(move_speed,1,0.9)
+		move_speed = 1
 
+#@rpc("call_local")
+#func broadcast_interaccionE() -> void:
+#	E = true
 
 @rpc("call_local")
 func broadcast_idle1() -> void:

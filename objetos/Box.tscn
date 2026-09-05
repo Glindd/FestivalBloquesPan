@@ -3,13 +3,16 @@
 [ext_resource type="Script" uid="uid://cyxp5com8l0p" path="res://objetos/box.gd" id="1_2rc46"]
 [ext_resource type="PackedScene" uid="uid://cetbu7ijb68wf" path="res://objetos/interaccion_area.tscn" id="1_13pef"]
 
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_2rc46"]
+vertex_color_use_as_albedo = true
+
 [sub_resource type="BoxMesh" id="BoxMesh_yf5fn"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_yf5fn"]
 size = Vector3(0.4198761, 0.34899902, 0.42004395)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_13pef"]
-size = Vector3(1, 0.68188477, 1)
+size = Vector3(0.70666504, 0.5909729, 0.7312622)
 
 [node name="Caja_Interactuable" type="Node3D" unique_id=1986920888]
 script = ExtResource("1_2rc46")
@@ -18,22 +21,25 @@ script = ExtResource("1_2rc46")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="AnimatableBody3D" unique_id=162234593]
 transform = Transform3D(0.3936983, 0, 0, 0, 0.33023924, 0, 0, 0, 0.40655917, 0, 0, 0)
+material_override = SubResource("StandardMaterial3D_2rc46")
 mesh = SubResource("BoxMesh_yf5fn")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="AnimatableBody3D" unique_id=1452948664]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.002494812, 0.0099487305, 0.0025024414)
 shape = SubResource("BoxShape3D_yf5fn")
 
-[node name="Interaccion_area" parent="." unique_id=1987325372 node_paths=PackedStringArray("label") instance=ExtResource("1_13pef")]
+[node name="Interaccion_area" parent="." unique_id=1987325372 node_paths=PackedStringArray("meshInstance", "label", "Objeto_Interactuable") instance=ExtResource("1_13pef")]
+meshInstance = NodePath("../AnimatableBody3D/MeshInstance3D")
 label = NodePath("Label3D")
+Objeto_Interactuable = NodePath("..")
 
 [node name="CollisionShape3D2" type="CollisionShape3D" parent="Interaccion_area" unique_id=737107152]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.15905762, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.016784668, 0.116622925, 0.0317688)
 shape = SubResource("BoxShape3D_13pef")
 
 [node name="Label3D" type="Label3D" parent="Interaccion_area" unique_id=612185571]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.37691134, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.29085267, 0)
 pixel_size = 0.004
 billboard = 1
 text = "Press E"
-font_size = 60
+font_size = 25

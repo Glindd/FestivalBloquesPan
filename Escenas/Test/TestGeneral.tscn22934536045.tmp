@@ -6,7 +6,6 @@
 [ext_resource type="PackedScene" uid="uid://bv25gl45o5yyl" path="res://objetos/Puerta.tscn" id="4_8u7e0"]
 [ext_resource type="PackedScene" uid="uid://boluj44ie7tx6" path="res://objetos/Faro.tscn" id="5_0ckwa"]
 [ext_resource type="PackedScene" uid="uid://dtyaejpfjc5qh" path="res://objetos/Box.tscn" id="6_b1h8k"]
-[ext_resource type="Script" uid="uid://b8a60luep3vjk" path="res://scripts/GameManager.gd" id="7_60hjd"]
 
 [sub_resource type="Environment" id="Environment_g4v7s"]
 background_mode = 1
@@ -14,6 +13,14 @@ background_color = Color(0.18991381, 0.25584525, 0.31440324, 1)
 background_energy_multiplier = 1.06
 ambient_light_source = 3
 ambient_light_color = Color(0.89879423, 0.72054744, 0.45372504, 1)
+
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_b1h8k"]
+properties/0/path = NodePath(".:game_time")
+properties/0/spawn = true
+properties/0/replication_mode = 2
+properties/1/path = NodePath(".:dinero_recaudado")
+properties/1/spawn = true
+properties/1/replication_mode = 2
 
 [node name="TestGeneral" type="Node3D" unique_id=1047735781]
 script = ExtResource("1_sqgaj")
@@ -65,5 +72,5 @@ spawn_path = NodePath("../Players")
 
 [node name="Timer" type="Timer" parent="." unique_id=442857736]
 
-[node name="Data" type="Node" parent="." unique_id=822487180]
-script = ExtResource("7_60hjd")
+[node name="DataSynchronizer" type="MultiplayerSynchronizer" parent="." unique_id=1965016298]
+replication_config = SubResource("SceneReplicationConfig_b1h8k")
