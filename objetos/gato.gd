@@ -41,6 +41,11 @@ var curAnim: int = IDLE
 @onready var model: Node3D = $GatoV5_Bone/Esqueleto
 @onready var collision_shape_3d: CollisionShape3D = $CollisionShape3D
 
+@onready var cargando: bool = false
+@onready var siendocargado: bool = false
+@onready var personaje_Arriba: Player
+@export var Arriba: Area3D
+
 func _ready() -> void:
 	sync_timer.timeout.connect(_on_sync_timeout)
 
@@ -54,7 +59,6 @@ func _ready() -> void:
 		sync_timer.start()
 
 func _input(event: InputEvent) -> void:
-	
 	#Mouse
 	if event.is_action_pressed("Menu"):
 		if Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
@@ -114,6 +118,8 @@ func update_tree() -> void:
 	animation_tree["parameters/RotandoL/add_amount"] = intensidadL
 		
 func _physics_process(delta: float) -> void:
+	if siendocargado:
+		return
 	speed = lerpf(speed,input_synchronizer.move_speed,0.05)
 	if is_emoteando:
 		velocity.x = move_toward(velocity.x,0,acceleration)
@@ -125,10 +131,9 @@ func _physics_process(delta: float) -> void:
 		velocity += get_gravity()*delta
 	animation_player.speed_scale = max(int(speed * 1), 1)
 	
-	if not is_emoteando:
+	if not is_emoteando or not siendocargado:
 		
 		#Controlador de la animacion de giro del gato
-		
 		var dif_angulo: float = angle_difference(model.rotation.y, spring_arm_3d.rotation.y)
 		var umbral_giro: float = 0.005
 		fuerza_giro = lerpf(fuerza_giro,clampf(absf(dif_angulo) / (PI/4), 0, 1.5),0.2)
@@ -138,7 +143,7 @@ func _physics_process(delta: float) -> void:
 			curRot = L
 		else:
 			curRot = C
-			
+		
 		#El giro del gato
 		model.rotation.y = lerp_angle(
 			model.rotation.y,
@@ -174,7 +179,10 @@ func _physics_process(delta: float) -> void:
 	
 	move_and_slide()
 
+func combinar_personajes() -> void:
+	pass
 
+#001
 
 func _ajustar_camara(largo: float, alto:float) -> void:
 	spring_arm_3d.spring_length += largo
