@@ -121,8 +121,8 @@ func _execute_interaction() -> void:
 			if plato_entregado == receta_actual:
 				print("Servidor: ¡Entrega Exitosa! El jugador ", peer_id, " entregó ", plato_entregado)
 				
-				# Quitar el plato de la mano
-				jugador.objeto_en_mano.queue_free()
+				# Quitar el plato de la mano, en todas las máquinas
+				jugador.objeto_en_mano.desaparecer.rpc()
 				jugador.objeto_en_mano = null
 				#jugador.vaciar_manos_rpc.rpc()
 				
