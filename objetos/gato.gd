@@ -27,12 +27,6 @@ signal tiempo_trabajando(tiempo: int)
 @onready var action_state_machine: AnimationNodeStateMachinePlayback = animation_tree.get("parameters/StateMachine/playback")
 @onready var t_inicio: float = animation_player.get_animation("Esqueleto_acción_004").length
 
-enum {C,R,L}
-var curRot:int = C
-@onready var intensidadR:float = 0
-@onready var intensidadL:float = 0
-@onready var fuerza_giro:float = 0
-
 enum Posicion {LIBRE, ARRIBA_DE, ABAJO_D}
 var posicion_actual : Posicion = Posicion.LIBRE
 var gato_base: Player = null
@@ -41,16 +35,18 @@ const  OFFSET_ALTURA: Vector3 = Vector3(0,0.5,0)
 @onready var arriba_de: Area3D = $ArribaDe
 @onready var capa: Node3D = $GatoV5_Bone/Esqueleto/Skeleton3D/Cube/Capa
 
-enum {IDLE,WALK,RUN}
+enum {IDLE,WALK,RUN,ARRIBA}
 var curAnim: int = IDLE
 @onready var walk_val: float = 0
 @onready var run: float = 0
+@export var idle2: float = 0
 @export var blend_speed: int = 15
 
 @onready var label_3d: Label3D = $GatoV5_Bone/Esqueleto/Skeleton3D/Cube/Label3D
 
 @onready var spring_arm_3d: SpringArm3D = $SpringArm3D
 @onready var camera_3d: Camera3D = $SpringArm3D/Camera3D
+@onready var fov_base: float = 80.0
 
 @onready var burbuja_emote: BurbujaEmote = $BurbujaEmote
 
@@ -203,30 +199,25 @@ func handle_animation(delta: float) -> void:
 		IDLE:
 			walk_val = lerpf(walk_val,0,blend_speed*delta)
 			run = lerpf(run,0,blend_speed*delta)
+			idle2 = 0
 		WALK:
 			walk_val = lerpf(walk_val,1.5,blend_speed*delta)
 			run = lerpf(run,0,blend_speed*delta)
+			idle2 = 0
 		RUN:
 			walk_val = lerpf(walk_val,0,blend_speed*delta)
 			run = lerpf(run,1.5,blend_speed*delta)
-
-	match curRot:
-		R:
-			intensidadL = lerpf(intensidadL,0,blend_speed*delta/3)
-			intensidadR = lerpf(intensidadR,fuerza_giro,blend_speed*delta/3)
-		L:
-			intensidadL = lerpf(intensidadL,fuerza_giro,blend_speed*delta/3)
-			intensidadR = lerpf(intensidadR,0,blend_speed*delta/3)
-		C:
-			intensidadL = lerpf(intensidadL,0,blend_speed*delta/3)
-			intensidadR = lerpf(intensidadR,0,blend_speed*delta/3)
+			idle2 = 0
+		ARRIBA:
+			walk_val = 0
+			run = 0
+			idle2 = 1
 	update_tree()
 
 func update_tree() -> void:
 	animation_tree["parameters/Walk/blend_amount"] = walk_val
 	animation_tree["parameters/Run/blend_amount"] = run
-	animation_tree["parameters/RotandoR/add_amount"] = intensidadR
-	animation_tree["parameters/RotandoL/add_amount"] = intensidadL
+	animation_tree["parameters/Arriba/blend_amount"] = idle2
 		
 func _physics_process(delta: float) -> void:
 	match posicion_actual:
@@ -238,6 +229,7 @@ func _physics_process(delta: float) -> void:
 			comportamiento_abajo(delta)	
 	
 func comportamiento_normal(delta: float) -> void:
+	camera_3d.fov = lerpf(camera_3d.fov,fov_base,0.05)
 	speed = lerpf(speed,input_synchronizer.move_speed,0.05)
 	if is_emoteando:
 		velocity.x = move_toward(velocity.x,0,acceleration)
@@ -263,17 +255,6 @@ func comportamiento_normal(delta: float) -> void:
 			apuntado.is_hovered = true
 				
 	if not is_emoteando:
-		
-		#Controlador de la animacion de giro del gato
-		var dif_angulo: float = angle_difference(model.rotation.y, spring_arm_3d.rotation.y)
-		var umbral_giro: float = 0.005
-		fuerza_giro = lerpf(fuerza_giro,clampf(absf(dif_angulo) / (PI/4), 0, 1.5),0.2)
-		if dif_angulo > umbral_giro:
-			curRot = R
-		elif dif_angulo < -umbral_giro:
-			curRot = L
-		else:
-			curRot = C
 		
 		#El giro del gato
 		model.rotation.y = lerp_angle(
@@ -317,13 +298,14 @@ func comportamiento_arriba(delta: float) -> void:
 		velocity = Vector3.ZERO
 		#model.global_rotation = gato_base.model.rotation
 		
-		curAnim = IDLE
+		curAnim = ARRIBA
 		handle_animation(delta)
 	if input_synchronizer.jump:
 		desmontarse()
 	
 func comportamiento_abajo(delta: float) -> void:
 	speed = lerpf(speed,input_synchronizer.move_speed,0.05)
+	camera_3d.fov = lerpf(camera_3d.fov, 1 ,0.2)
 	
 	model.rotation.y = lerp_angle(
 			model.rotation.y,

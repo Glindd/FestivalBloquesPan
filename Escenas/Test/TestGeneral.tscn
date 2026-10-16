@@ -24,12 +24,6 @@ background_energy_multiplier = 1.06
 ambient_light_source = 3
 ambient_light_color = Color(0.89879423, 0.72054744, 0.45372504, 1)
 
-[sub_resource type="BoxMesh" id="BoxMesh_g4v7s"]
-size = Vector3(10.026123, 2.9511719, 0.36706543)
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_g4v7s"]
-size = Vector3(8.727783, 3.1166382, 0.36242676)
-
 [node name="TestGeneral" type="Node3D" unique_id=1047735781]
 script = ExtResource("1_sqgaj")
 player_scene = ExtResource("1_1m2tr")
@@ -44,7 +38,7 @@ light_indirect_energy = 0.536
 shadow_enabled = true
 
 [node name="StaticBody3D" parent="." unique_id=766345700 instance=ExtResource("2_sqgaj")]
-transform = Transform3D(0.98919237, 0, 0, 0, 0.98919237, 0, 0, 0, 0.98919237, -1.1487621, 0.083810806, 0.0068979263)
+transform = Transform3D(0.98919237, 0, 0, 0, 0.98919237, 0, 0, 0, 0.98919237, 0, 0, 0)
 
 [node name="SpawnPoints" type="Node3D" parent="." unique_id=1844476207]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.20533323, 0)
@@ -169,91 +163,3 @@ outline_size = 18
 
 [node name="IngredienteBase" parent="." unique_id=344026824 instance=ExtResource("15_q71s4")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.8504605, 0.121956155, 2.1716383)
-
-[node name="Pared" type="StaticBody3D" parent="." unique_id=1657573780]
-transform = Transform3D(0.9994454, 0, -0.0332999, 0, 1, 0, 0.0332999, 0, 0.9994454, -0.5318105, 0, 4.33857)
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="Pared" unique_id=1870613706]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.4570713, 1.5953865, 0)
-mesh = SubResource("BoxMesh_g4v7s")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Pared" unique_id=951813044]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.8842778, 1.0583191, -4.7683716e-07)
-shape = SubResource("BoxShape3D_g4v7s")
-
-[node name="Pared6" type="StaticBody3D" parent="." unique_id=288643131]
-transform = Transform3D(0.036317647, 0, 0.99934024, 0, 1, 0, -0.99934024, 0, 0.036317647, -3.1482685, 0, 4.6931195)
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="Pared6" unique_id=129790164]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.4570713, 1.5953865, 0)
-mesh = SubResource("BoxMesh_g4v7s")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Pared6" unique_id=783466059]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.354248, 1.0583191, 0)
-shape = SubResource("BoxShape3D_g4v7s")
-
-[node name="Pared7" type="StaticBody3D" parent="." unique_id=1358868171]
-transform = Transform3D(-0.99999994, 0, 8.742277e-08, 0, 1, 0, -8.742277e-08, 0, -0.99999994, -3.1482685, 0, 8.723936)
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="Pared7" unique_id=754790821]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.4570713, 1.5953865, 0)
-mesh = SubResource("BoxMesh_g4v7s")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Pared7" unique_id=1442454919]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.354248, 1.0583191, 0)
-shape = SubResource("BoxShape3D_g4v7s")
-
-[node name="Pared8" type="StaticBody3D" parent="." unique_id=1160201244]
-transform = Transform3D(-4.3711385e-08, 0, -0.9999999, 0, 1, 0, 0.9999999, 0, -4.3711385e-08, 6.196637, 0, 8.723936)
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="Pared8" unique_id=1092665714]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.4570713, 1.5953865, 0)
-mesh = SubResource("BoxMesh_g4v7s")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Pared8" unique_id=1451224866]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.354248, 1.0583191, 0)
-shape = SubResource("BoxShape3D_g4v7s")
-
-[node name="Pared5" type="StaticBody3D" parent="." unique_id=1749029974]
-transform = Transform3D(0.9998412, 0, -0.017815929, 0, 1, 0, 0.017815929, 0, 0.9998412, 10.795496, 0, 4.33857)
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="Pared5" unique_id=1495890952]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.4570713, 1.5953865, 0)
-mesh = SubResource("BoxMesh_g4v7s")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Pared5" unique_id=916005402]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.354248, 1.0583191, 0)
-shape = SubResource("BoxShape3D_g4v7s")
-
-[node name="Pared2" type="StaticBody3D" parent="." unique_id=550122454]
-transform = Transform3D(0.040995505, 0, -0.99915934, 0, 1, 0, 0.99915934, 0, 0.040995505, -3.7095366, 0, 3.7440753)
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="Pared2" unique_id=2079809057]
-transform = Transform3D(0.9953456, 0, -0.09637095, 0, 1, 0, 0.09637095, 0, 0.9953456, -4.5264754, 1.5953865, 0.32696176)
-mesh = SubResource("BoxMesh_g4v7s")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Pared2" unique_id=533898057]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.393921, 1.0583191, 0)
-shape = SubResource("BoxShape3D_g4v7s")
-
-[node name="Pared3" type="StaticBody3D" parent="." unique_id=78609450]
-transform = Transform3D(-0.99979347, 0, 0.020327087, 0, 1, 0, -0.020327087, 0, -0.99979347, -3.7095366, 0, -5.5775275)
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="Pared3" unique_id=2026552611]
-transform = Transform3D(1.0000001, 0, 0, 0, 1, 0, 0, 0, 1.0000001, -4.5264754, 1.5953865, 0.32696176)
-mesh = SubResource("BoxMesh_g4v7s")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Pared3" unique_id=948430710]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.393921, 1.0583191, 0)
-shape = SubResource("BoxShape3D_g4v7s")
-
-[node name="Pared4" type="StaticBody3D" parent="." unique_id=327047473]
-transform = Transform3D(0.0025547836, 0, 0.9999968, 0, 1, 0, -0.9999968, 0, 0.0025547836, 5.3600817, 0, -5.5775275)
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="Pared4" unique_id=1127700685]
-transform = Transform3D(0.99968666, 0, -0.02502846, 0, 1, 0, 0.02502846, 0, 0.99968666, -4.525651, 1.5953865, 0.6492491)
-mesh = SubResource("BoxMesh_g4v7s")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Pared4" unique_id=1156490054]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.393921, 1.0583191, 0)
-shape = SubResource("BoxShape3D_g4v7s")

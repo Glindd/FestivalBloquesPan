@@ -14,7 +14,7 @@ func _ready() -> void:
 		await get_tree().create_timer(0.5).timeout
 	for player_data: Statics.PlayerData in Game.instance.players:
 		player_spawner.spawn(player_data.to_dict())
-		
+	GameManager.instance.game_time = 240
 
 func _spawn_player(data: Dictionary) -> Node:
 	var player_data:Statics.PlayerData = Statics.PlayerData.from_dict(data)

@@ -6,6 +6,9 @@
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_wewlb"]
 albedo_texture = ExtResource("1_qnl3r")
+uv1_scale = Vector3(0.78, 0.78, 0.78)
+uv1_triplanar = true
+uv1_triplanar_sharpness = 1.0352699
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_g4v7s"]
 
