@@ -7,7 +7,7 @@
 albedo_texture = ExtResource("2_h4uxd")
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_cs4y6"]
-size = Vector3(0.3, 0.3, 0.15)
+size = Vector3(0.03, 0.03, 0.015)
 
 [node name="Levadura" unique_id=344026824 instance=ExtResource("1_ppodq")]
 nombre_ingrediente = "levadura"
