@@ -11,7 +11,8 @@
 [ext_resource type="PackedScene" uid="uid://dgiiykt7iitta" path="res://objetos/ingredientes/harina.tscn" id="9_xjfos"]
 [ext_resource type="PackedScene" uid="uid://dk6x7tr4xdi5p" path="res://objetos/ingredientes/agua.tscn" id="10_xjfos"]
 [ext_resource type="PackedScene" uid="uid://cmr7ditqitybl" path="res://objetos/mesa_cocina.tscn" id="11_pg8uc"]
-[ext_resource type="PackedScene" uid="uid://c1ii0yoyavka" path="res://objetos/NPC/Recepcion.tscn" id="12_1wwit"]
+[ext_resource type="PackedScene" uid="uid://cnjflu5k247wb" path="res://objetos/ingredientes/levadura.tscn" id="12_1wwit"]
+[ext_resource type="PackedScene" uid="uid://wpbny152rtsb" path="res://objetos/horno.tscn" id="13_2s8wn"]
 
 [sub_resource type="Environment" id="Environment_g4v7s"]
 background_mode = 1
@@ -96,5 +97,17 @@ transform = Transform3D(-0.6533298, 0, -0.75707334, 0, 1, 0, 0.75707334, 0, -0.6
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.55237234, 0)
 text = "Mesa"
 
-[node name="Recepcion" parent="." unique_id=223453735 instance=ExtResource("12_1wwit")]
-transform = Transform3D(0.3106091, 0, 0.95053786, 0, 1, 0, -0.95053786, 0, 0.3106091, -5.028069, 0.39564037, -2.0019925)
+[node name="EstanteLevadura" parent="." unique_id=1710524392 instance=ExtResource("8_uwlw6")]
+transform = Transform3D(0.72044104, 0, 0.6935161, 0, 1, 0, -0.6935161, 0, 0.72044104, 0.910537, 0.29050314, -1.5289538)
+tipo_de_ingrediente = ExtResource("12_1wwit")
+
+[node name="LabelLevadura" type="Label3D" parent="EstanteLevadura" unique_id=2105004130]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.4684385, 0)
+text = "Levadura"
+
+[node name="Horno" parent="." unique_id=357074113 instance=ExtResource("13_2s8wn")]
+transform = Transform3D(0.72044104, 0, 0.6935161, 0, 1, 0, -0.6935161, 0, 0.72044104, -0.75083333, 0.29050314, -4.6747875)
+
+[node name="LabelHorno" type="Label3D" parent="Horno" unique_id=1030310115]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.51394904, 0)
+text = "Horno"

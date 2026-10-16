@@ -2,14 +2,10 @@
 
 [ext_resource type="PackedScene" uid="uid://dtyaejpfjc5qh" path="res://objetos/Box.tscn" id="1_7euff"]
 [ext_resource type="Script" uid="uid://ecyob61eosu1" path="res://objetos/estante.gd" id="2_tlkn5"]
-[ext_resource type="Script" uid="uid://c01d6h4imayju" path="res://objetos/interaccion_area.gd" id="3_tlkn5"]
 
 [node name="Estante" unique_id=1986920888 instance=ExtResource("1_7euff")]
 script = ExtResource("2_tlkn5")
 tipo_de_ingrediente = null
-
-[node name="Interaccion_area" parent="." index="1" unique_id=1987325372]
-script = ExtResource("3_tlkn5")
 
 [node name="SpawnPoint" type="Marker3D" parent="." index="2" unique_id=434735570]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.48731446, 0, 0)

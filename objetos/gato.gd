@@ -26,14 +26,6 @@ var curRot:int = C
 @onready var intensidadL:float = 0
 @onready var fuerza_giro:float = 0
 
-enum Posicion {LIBRE, ARRIBA_DE, ABAJO_D}
-var posicion_actual : Posicion = Posicion.LIBRE
-var gato_base: Player = null
-var gato_jinete: Player = null
-const  OFFSET_ALTURA: Vector3 = Vector3(0,0.5,0)
-@onready var arriba_de: Area3D = $ArribaDe
-@onready var capa: Node3D = $GatoV5_Bone/Esqueleto/Skeleton3D/Cube/Capa
-
 enum {IDLE,WALK,RUN}
 var curAnim: int = IDLE
 @onready var walk_val: float = 0
@@ -53,6 +45,11 @@ var curAnim: int = IDLE
 @onready var model: Node3D = $GatoV5_Bone/Esqueleto
 @onready var collision_shape_3d: CollisionShape3D = $CollisionShape3D
 
+@onready var cargando: bool = false
+@onready var siendocargado: bool = false
+@onready var personaje_Arriba: Player
+@export var Arriba: Area3D
+
 # variables para tomar objetos
 @onready var shape_cast: ShapeCast3D = $SpringArm3D/Camera3D/GrabArea
 @onready var nodo_agarre: Marker3D = $SpringArm3D/Camera3D/GrabArea/GrabTarget
@@ -62,24 +59,15 @@ var objeto_en_mano: Ingrediente = null
 
 func _ready() -> void:
 	sync_timer.timeout.connect(_on_sync_timeout)
-	
-	arriba_de.body_entered.connect(_on_arriba_de_body_entered)
-	
+
 	var player_data: Statics.PlayerData = Game.instance.get_player(get_multiplayer_authority())
 	label_3d.text = player_data.name
-	capa.visible = false
 	label_3d.visible = not is_multiplayer_authority()
 	#sprite_puntero.visible = is_multiplayer_authority()
 	camera_3d.current = is_multiplayer_authority()
 	if is_multiplayer_authority():
 		#Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 		sync_timer.start()
-
-func _on_arriba_de_body_entered(body: Node3D) -> void:
-	if body is Player and body != self:
-		if self.posicion_actual == Posicion.LIBRE:
-			if body.is_multiplayer_authority() and body.posicion_actual == Posicion.LIBRE:
-				body.intentar_subir(self)
 
 func _input(event: InputEvent) -> void:
 	#Mouse
@@ -104,7 +92,8 @@ func _unhandled_input(event: InputEvent) -> void:
 			soltar_objeto()
 		else:
 			tomar_objeto()
-
+		
+		
 	var mouse_motion: InputEventMouseMotion = event as InputEventMouseMotion
 	if mouse_motion:
 		spring_arm_3d.rotation.y = spring_arm_3d.rotation.y - input_synchronizer.mouse_vector.x * mouse_sensitivy
@@ -148,15 +137,8 @@ func update_tree() -> void:
 	animation_tree["parameters/RotandoL/add_amount"] = intensidadL
 		
 func _physics_process(delta: float) -> void:
-	match posicion_actual:
-		Posicion.LIBRE:
-			comportamiento_normal(delta)	
-		Posicion.ARRIBA_DE:
-			comportamiento_arriba(delta)	
-		Posicion.ABAJO_D:
-			comportamiento_abajo(delta)	
-	
-func comportamiento_normal(delta: float) -> void:
+	if siendocargado:
+		return
 	speed = lerpf(speed,input_synchronizer.move_speed,0.05)
 	if is_emoteando:
 		velocity.x = move_toward(velocity.x,0,acceleration)
@@ -181,7 +163,7 @@ func comportamiento_normal(delta: float) -> void:
 		
 		objeto_en_mano.rpc_id(1, "update_held_position", target_pos, target_rot)
 	
-	if not is_emoteando:
+	if not is_emoteando or not siendocargado:
 		
 		#Controlador de la animacion de giro del gato
 		var dif_angulo: float = angle_difference(model.rotation.y, spring_arm_3d.rotation.y)
@@ -229,97 +211,10 @@ func comportamiento_normal(delta: float) -> void:
 	
 	move_and_slide()
 
-func comportamiento_arriba(delta: float) -> void:
-	if is_instance_valid(gato_base):
+func combinar_personajes() -> void:
+	pass
 
-		global_position = gato_base.global_position + OFFSET_ALTURA
-		velocity = Vector3.ZERO
-		#model.global_rotation = gato_base.model.rotation
-		
-		curAnim = IDLE
-		handle_animation(delta)
-	if input_synchronizer.jump:
-		desmontarse()
-	
-func comportamiento_abajo(delta: float) -> void:
-	speed = lerpf(speed,input_synchronizer.move_speed,0.05)
-	
-	model.rotation.y = lerp_angle(
-			model.rotation.y,
-			spring_arm_3d.rotation.y,
-			10 * delta
-		)
-	collision_shape_3d.rotation = model.rotation
-	gato_jinete.model.rotation = model.rotation
-	
-	if not input_synchronizer.move_input.is_zero_approx() and is_on_floor():
-		if speed < 2.4:
-			curAnim = WALK
-		else:
-			curAnim = RUN
-	else:
-		curAnim = IDLE
-	handle_animation(delta)
-	
-	var move_input: Vector2 = input_synchronizer.move_input
-	var direction: Vector3 = model.transform.basis * Vector3(move_input.x, 0, move_input.y)
-	var target: Vector2 = Vector2(direction.x, direction.z) * speed
-	var current: Vector2 = Vector2(velocity.x, velocity.z)
-	var result: Vector2 = current.move_toward(target, acceleration * delta)
-	velocity.x = result.x
-	velocity.z = result.y
-
-	move_and_slide()
-
-func intentar_subir(otro_gato: Player) -> void:
-	if not is_multiplayer_authority():
-		return
-	if self.posicion_actual == Posicion.LIBRE and otro_gato.posicion_actual == Posicion.LIBRE:
-		rpc("rpc_sincronizar_apilamiento", otro_gato.get_path())
-		
-
-@rpc("any_peer", "call_local", "reliable")
-func rpc_sincronizar_apilamiento(ruta_gato_base: NodePath) -> void:
-	var base:Player= get_node_or_null(ruta_gato_base)
-	if not base:
-		return
-		
-	self.posicion_actual = Posicion.ARRIBA_DE
-	self.gato_base = base
-	self.capa.visible = true
-	
-	base.posicion_actual = Posicion.ABAJO_D
-	base.gato_jinete = self
-	base.visible = false
-	
-	#collision_shape_3d.set_deferred("disabled", true)
-	arriba_de.set_deferred("monitoring", false)
-			
-func desmontarse() -> void:
-	if not is_multiplayer_authority():
-		return
-		
-	if posicion_actual == Posicion.ARRIBA_DE and is_instance_valid(gato_base):
-		rpc("rpc_sincronizar_desmonte")
-
-@rpc("any_peer", "call_local", "reliable")
-func rpc_sincronizar_desmonte() -> void:
-	if is_instance_valid(gato_base):
-		gato_base.posicion_actual = Posicion.LIBRE
-		gato_base.gato_jinete = null
-		gato_base.visible = true
-		
-	self.posicion_actual = Posicion.LIBRE
-	self.gato_base = null
-	self.capa.visible = false
-	
-	
-	#collision_shape_3d.set_deferred("disabled", false)
-	arriba_de.set_deferred("monitoring", true)
-
-	if is_multiplayer_authority():
-		velocity.y = jump_speed
-		velocity.z = -4.0
+#001
 
 func _ajustar_camara(largo: float, alto:float) -> void:
 	spring_arm_3d.spring_length += largo
