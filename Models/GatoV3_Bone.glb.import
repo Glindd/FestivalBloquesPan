@@ -4,12 +4,12 @@ importer="scene"
 importer_version=1
 type="PackedScene"
 uid="uid://d07e3cdwdwu60"
-path="res://.godot/imported/GatoV3_Bone.glb-2de8e9f91ca76adbf6db4dc25b3a233e.scn"
+path="res://.godot/imported/GatoV3_Bone.glb-834d19566db114121edf3de611afd187.scn"
 
 [deps]
 
-source_file="res://Models/GatoV3_Bone.glb"
-dest_files=["res://.godot/imported/GatoV3_Bone.glb-2de8e9f91ca76adbf6db4dc25b3a233e.scn"]
+source_file="res://models/GatoV3_Bone.glb"
+dest_files=["res://.godot/imported/GatoV3_Bone.glb-834d19566db114121edf3de611afd187.scn"]
 
 [params]
 
