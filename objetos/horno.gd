@@ -27,14 +27,16 @@ func _execute_interaction_q() -> void:
 	if is_instance_valid(ingrediente):
 		return
 
-	var jugador: Player = _get_player_by_peer_id(_quien_apreto())
-	if jugador == null or jugador.objeto_en_mano == null:
+	var quien: int = _quien_apreto()
+	var jugador: Player = _get_player_by_peer_id(quien)
+	
+	# Si no hay jugador o no tiene nada en la mano, no se puede meter nada
+	if jugador == null or not is_instance_valid(jugador.objeto_en_mano):
 		return
 
+	# Llamamos a meter en el horno
 	_meter_en_el_horno.rpc(jugador.objeto_en_mano.get_path(), nodo_ing.global_position)
-
-
-# con e se hornea, o se saca lo que ya está listo
+	
 @rpc("any_peer", "call_local", "reliable")
 func _execute_interaction() -> void:
 	if not multiplayer.is_server():
@@ -43,17 +45,22 @@ func _execute_interaction() -> void:
 		return
 
 	var quien: int = _quien_apreto()
+	var jugador: Player = _get_player_by_peer_id(quien)
 	var siguiente: PackedScene = _buscar_en_pasos()
 
+	# Si hay un paso de cocción, se hornea
 	if siguiente != null and siguiente != dummy_ing:
 		_hornear_en_todos.rpc(ingrediente.get_path(), siguiente.resource_path, "Ingrediente_" + str(Time.get_ticks_msec()))
 		return
 
+	# Bloquear si el jugador ya tiene las manos ocupadas y solo intenta retirar
+	if jugador != null and is_instance_valid(jugador.objeto_en_mano):
+		return
+
+	# Sacar del horno
 	var listo: Ingrediente = ingrediente
 	_sacar_del_horno.rpc()
 	listo.request_tomar(quien)
-
-
 # ---- los cambios de estado, que corren igual en todas las máquinas ----
 
 @rpc("authority", "call_local", "reliable")
@@ -91,13 +98,14 @@ func _hornear_en_todos(ruta_a_borrar: NodePath, ruta_escena: String, nombre_unic
 
 func texto_de_ayuda(jugador: Player) -> String:
 	if not is_instance_valid(ingrediente):
-		if jugador.objeto_en_mano:
+		if is_instance_valid(jugador.objeto_en_mano):
 			return "Presionar Q para meter al horno"
 		return "Horno"
 	if pasos.get(ingrediente.nombre_ingrediente, dummy_ing) != dummy_ing:
 		return "Presionar E para hornear"
-	return "Presionar E para sacar"
-
+	if not is_instance_valid(jugador.objeto_en_mano): # Solo si tiene manos libres
+		return "Presionar E para sacar"
+	return "Horno ocupado"
 
 func _buscar_en_pasos() -> PackedScene:
 	if not is_instance_valid(ingrediente):

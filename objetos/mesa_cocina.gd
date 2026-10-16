@@ -85,6 +85,7 @@ func _execute_interaction() -> void:
 		return
 
 	var quien: int = _quien_apreto()
+	var jugador: Player = _get_player_by_peer_id(quien)
 	var siguiente: PackedScene = _buscar_en_pasos()
 
 	if siguiente != null and siguiente != dummy_ing:
@@ -98,7 +99,9 @@ func _execute_interaction() -> void:
 				rutas_a_borrar.append(ing.get_path())
 		_cocinar_en_todos.rpc(rutas_a_borrar, siguiente.resource_path, "Ingrediente_" + str(Time.get_ticks_msec()))
 		return
-
+		
+	if jugador != null and is_instance_valid(jugador.objeto_en_mano):
+		return
 	# Si hay algo listo sobre la mesa se lo lleva quien apretó. Antes esto se mandaba ante
 	# cualquier E, incluso con la mesa vacía, y por eso el pan recién hecho se le
 	# teletransportaba a la mano al que apretaba desde el otro lado de la cocina.
@@ -219,9 +222,11 @@ func texto_de_ayuda(jugador: Player) -> String:
 	if pasos.get(_llave_de_la_mesa(), dummy_ing) != dummy_ing:
 		lineas.push_back("Presionar E para preparar")
 	elif is_instance_valid(ingrediente_listo):
-		lineas.push_back("Presionar E para tomar")
+		if not is_instance_valid(jugador.objeto_en_mano):
+			lineas.push_back("Presionar E para tomar")
 	elif ingredientes.size() > 0:
-		lineas.push_back("Presionar E para recuperar")
+		if not is_instance_valid(jugador.objeto_en_mano):
+			lineas.push_back("Presionar E para recuperar")
 	if lineas.is_empty():
 		return "Mesa de preparación"
 	return "\n".join(PackedStringArray(lineas))

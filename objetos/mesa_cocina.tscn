@@ -5,7 +5,6 @@
 
 [node name="MesaCocina" unique_id=1986920888 instance=ExtResource("1_ayiuj")]
 script = ExtResource("2_ppp1j")
-tiempo_accion = null
 
 [node name="MeshInstance3D" parent="AnimatableBody3D" parent_id_path=PackedInt32Array(765769244) index="0" unique_id=162234593]
 transform = Transform3D(0.7, 0, 0, 0, 0.33, 0, 0, 0, 0.407, 0, 0, 0)

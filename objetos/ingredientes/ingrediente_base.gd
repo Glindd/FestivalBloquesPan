@@ -30,7 +30,7 @@ func _ready() -> void:
 # El cartel aparece mientras el gato de esta máquina tiene el ingrediente al frente.
 # Antes, además, el ingrediente pegaba un salto cada vez que alguien lo miraba, y por eso
 # la cocina parecía moverse sola.
-func _process(_delta: float) -> void:
+func _physics_process(_delta: float) -> void:
 	if label:
 		label.visible = is_hovered and held_by == 0
 	is_hovered = false
