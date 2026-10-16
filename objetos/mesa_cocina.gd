@@ -1,17 +1,27 @@
 class_name MesaCocina
 extends ObjetoInteractuable
 
+# Mesa de preparación. El estado de la mesa, o sea qué hay encima y si quedó algo listo,
+# lo decide siempre el servidor, y cada cambio viaja como un rpc que corre igual en todas
+# las máquinas. Los clientes no deciden nada por su cuenta: solo aplican lo que llega.
+#
+# Los cambios se hacen por nodo y no por índice. Antes el servidor mandaba la posición
+# dentro del arreglo, pero el servidor reordenaba su copia al calcular la llave de la
+# receta, así que ese índice dejaba de apuntar al mismo casillero en el cliente y las dos
+# máquinas terminaban con mesas distintas sin forma de volver a cuadrarse.
+
 @onready var area_interaccion: CollisionShape3D = $Interaccion_area/CollisionShape3D2
 @onready var nodo_ing_1: Marker3D = $Ingrediente1
 @onready var nodo_ing_2: Marker3D = $Ingrediente2
 @onready var nodo_ing_3: Marker3D = $Ingrediente3
 @onready var nodo_listo: Marker3D = $IngredienteListo
+
 var ingredientes: Array[Ingrediente]
-var max_ingredientes = 3
+var max_ingredientes: int = 3
 var nodos_pos: Array[Marker3D]
 var nom_ingredientes: Array[String]
 var recibe_ingredientes: bool = true
-var dummy_ing = preload("res://objetos/ingredientes/dummy_ing.tscn") as PackedScene
+var dummy_ing: PackedScene = preload("res://objetos/ingredientes/dummy_ing.tscn") as PackedScene
 
 var ingrediente_listo: Ingrediente = null
 
@@ -37,6 +47,7 @@ var pasos: Dictionary = {
 	"masa_madre_cruda": dummy_ing
 }
 
+
 func _ready() -> void:
 	super()
 	if interaccion_area.label:
@@ -45,130 +56,119 @@ func _ready() -> void:
 	nodos_pos.push_back(nodo_ing_2)
 	nodos_pos.push_back(nodo_ing_3)
 
+
 # con q se dejan los ingredientes en la mesa
 @rpc("any_peer", "call_local", "reliable")
 func _execute_interaction_q() -> void:
-	#calcular lo necesario
-	print("ejecutando interaccion q")
-	if not recibe_ingredientes:
-		print("no recibe ings")
-		return
-	
 	if not multiplayer.is_server():
-		print("no tenia la autoridad")
 		return
-	
-	var sender_id = multiplayer.get_remote_sender_id()
-	var player = _get_player_by_peer_id(sender_id)
-	
-	if player == null or not player.objeto_en_mano:
-		print("objeto o player no encontrado")
+	if not recibe_ingredientes:
 		return
-	
-	if len(ingredientes) >= max_ingredientes:
-		print("demasiados ingredientes")
-		return
-	
-	var obj: Ingrediente = player.objeto_en_mano
-	if obj.nombre_ingrediente in nom_ingredientes:
-		print("ingrediente ya en la mesa")
-		return
-	
-	var index_actual = len(ingredientes)
-	var pos = nodos_pos[len(ingredientes)].global_position
-	
-	print("Servidor: cediendo objeto de ", player.name)
-	# actualizar objetos
-	_ceder_objeto_localmente(player, obj, pos)
-	print("cediendo en clientes")
-	# sincronizar
-	rpc("_sync_deposito", obj.get_path(), pos, index_actual, player.name)
-	
-func _ceder_objeto_localmente(player: Player, obj: Ingrediente, pos: Vector3) -> void:
-	print("cediendo objeto localmente desde", player.get_instance_id())
-	
-	player.ceder_objeto(pos)
-	ingredientes.push_back(obj)
-	nom_ingredientes.push_back(obj.nombre_ingrediente)
-	print("ya cedido")
-		
-@rpc("authority", "call_remote", "reliable")
-func _sync_deposito(obj_path: NodePath, pos: Vector3, index: int, player_name: String) -> void:
-	var obj = get_node_or_null(obj_path) as Ingrediente
-	if obj and obj is Ingrediente:
-		obj.held_by = -1
-		obj.freeze = true
-		obj.global_position = pos
-		obj.global_rotation = nodos_pos[index].global_rotation
-		if index >= len(ingredientes):
-			ingredientes.resize(index + 1)
-			nom_ingredientes.resize(index + 1)
-		ingredientes[index] = obj
-		nom_ingredientes[index] = obj.nombre_ingrediente
-	
-	var p = get_node_or_null("../Players/" + player_name)
-	if p and "objeto_en_mano" in p:
-		p.objeto_en_mano = null
-	
-func _get_player_by_peer_id(peer_id: int) -> Player:
-	for p in get_tree().get_nodes_in_group("players"):
-		if p.get_multiplayer_authority() == peer_id:
-			return p
-	return null
 
-# con e se cocina y se toma el resultado
+	var jugador: Player = _get_player_by_peer_id(_quien_apreto())
+	if jugador == null or jugador.objeto_en_mano == null:
+		return
+	if ingredientes.size() >= max_ingredientes:
+		return
+
+	var traido: Ingrediente = jugador.objeto_en_mano
+	if traido.nombre_ingrediente in nom_ingredientes:
+		return
+
+	_poner_en_la_mesa.rpc(traido.get_path(), nodos_pos[ingredientes.size()].global_position)
+
+
+# con e se cocina, se saca lo que quedó listo, o se recupera lo que uno mismo dejó
 @rpc("any_peer", "call_local", "reliable")
 func _execute_interaction() -> void:
-	if not is_multiplayer_authority():
+	if not multiplayer.is_server():
 		return
-	
-	var next = _buscar_en_pasos()
-	# si hay paso que hacer, hacerlo
-	if next != null and next != dummy_ing:
-		# La panadería solo prepara lo que ya compró en la tienda.
+
+	var quien: int = _quien_apreto()
+	var siguiente: PackedScene = _buscar_en_pasos()
+
+	if siguiente != null and siguiente != dummy_ing:
 		var bloqueada: RecetaDef = _receta_sin_comprar()
 		if bloqueada != null:
-			var id_del_que_apreto: int = multiplayer.get_remote_sender_id()
-			if id_del_que_apreto == 0:
-				id_del_que_apreto = 1
-			_avisar_receta_bloqueada.rpc_id(id_del_que_apreto, bloqueada.nombre)
+			_avisar_receta_bloqueada.rpc_id(quien, bloqueada.nombre)
 			return
-		print("existe siguiente paso")
-		# borrar ingredientes
-		recibe_ingredientes = false
-		
 		var rutas_a_borrar: Array = []
-		for ing in ingredientes:
-			rutas_a_borrar.append(ing.get_path())
-			
-		ingredientes.clear()
-		nom_ingredientes.clear()
-		# spawnear el siguiente
-		var nombre_unico = "Ingrediente_" + str(Time.get_ticks_msec())
-		
-		_procesar_cocina_en_todos.rpc(rutas_a_borrar, next.resource_path, nombre_unico)
+		for ing: Ingrediente in ingredientes:
+			if is_instance_valid(ing):
+				rutas_a_borrar.append(ing.get_path())
+		_cocinar_en_todos.rpc(rutas_a_borrar, siguiente.resource_path, "Ingrediente_" + str(Time.get_ticks_msec()))
 		return
-	# soltar el ingrediente
-	else:
-		print("next == dummy o no hay receta")
-		
-		#if ingredientes.size() > 0:
-			#print("Recuperando ingrediente base.")
-			# todo
-			
-		# Obtenemos quién hizo la interacción
-		var sender_id = multiplayer.get_remote_sender_id()
-		# Si fue el servidor el que interactuó localmente, su ID de emisor remoto puede ser 0 o 1
-		if sender_id == 0:
-			sender_id = 1
-		
-		var player = _get_player_by_peer_id(sender_id)
-		if player == null:
-			print("Jugador no encontrado para entregar el objeto.")
-			return
-			
-		#_sync_retirar_ingrediente_listo.rpc(sender_id)
-		_sync_retirar_ingrediente_listo.rpc(sender_id)
+
+	# Si hay algo listo sobre la mesa se lo lleva quien apretó. Antes esto se mandaba ante
+	# cualquier E, incluso con la mesa vacía, y por eso el pan recién hecho se le
+	# teletransportaba a la mano al que apretaba desde el otro lado de la cocina.
+	if is_instance_valid(ingrediente_listo):
+		var listo: Ingrediente = ingrediente_listo
+		_sacar_el_listo.rpc()
+		listo.request_tomar(quien)
+		return
+
+	# Y si no, se devuelve lo último que alguien dejó, para que la mesa no se quede con
+	# ingredientes atrapados cuando la combinación no corresponde a ninguna receta.
+	if ingredientes.is_empty():
+		return
+	var ultimo: Ingrediente = ingredientes[ingredientes.size() - 1]
+	if not is_instance_valid(ultimo):
+		return
+	_quitar_de_la_mesa.rpc(ultimo.get_path())
+	ultimo.request_tomar(quien)
+
+
+# ---- los cambios de estado, que corren igual en todas las máquinas ----
+
+@rpc("authority", "call_local", "reliable")
+func _poner_en_la_mesa(ruta: NodePath, pos: Vector3) -> void:
+	var ing: Ingrediente = get_node_or_null(ruta) as Ingrediente
+	if ing == null or ingredientes.has(ing):
+		return
+	ingredientes.push_back(ing)
+	nom_ingredientes.push_back(ing.nombre_ingrediente)
+	ing.dejar_en_mueble(pos)
+
+
+@rpc("authority", "call_local", "reliable")
+func _quitar_de_la_mesa(ruta: NodePath) -> void:
+	var ing: Ingrediente = get_node_or_null(ruta) as Ingrediente
+	var donde: int = ingredientes.find(ing)
+	if donde < 0:
+		return
+	ingredientes.remove_at(donde)
+	nom_ingredientes.remove_at(donde)
+
+
+@rpc("authority", "call_local", "reliable")
+func _sacar_el_listo() -> void:
+	ingrediente_listo = null
+	recibe_ingredientes = true
+
+
+@rpc("authority", "call_local", "reliable")
+func _cocinar_en_todos(rutas_a_borrar: Array, ruta_escena: String, nombre_unico: String) -> void:
+	for ruta: NodePath in rutas_a_borrar:
+		var viejo: Node = get_node_or_null(ruta)
+		if viejo:
+			viejo.queue_free()
+	ingredientes.clear()
+	nom_ingredientes.clear()
+
+	var escena: PackedScene = load(ruta_escena) as PackedScene
+	if escena == null:
+		recibe_ingredientes = true
+		return
+	var nuevo: Ingrediente = escena.instantiate() as Ingrediente
+	nuevo.name = nombre_unico
+	get_tree().current_scene.add_child(nuevo)
+	nuevo.dejar_en_mueble(nodo_listo.global_position)
+	ingrediente_listo = nuevo
+	recibe_ingredientes = false
+
+
+# ---- consultas ----
 
 # Qué receta falta comprar para poder preparar lo que hay sobre la mesa. Devuelve null
 # cuando la receta ya está desbloqueada y también cuando la combinación no corresponde a
@@ -190,27 +190,26 @@ func _avisar_receta_bloqueada(nombre_receta: String) -> void:
 		return
 	_avisos_mostrados += 1
 	var este_aviso: int = _avisos_mostrados
-	etiqueta.text = "Falta comprar
-" + nombre_receta
+	etiqueta.text = "Falta comprar\n" + nombre_receta
 	await get_tree().create_timer(SEGUNDOS_DE_AVISO).timeout
 	if este_aviso == _avisos_mostrados and is_instance_valid(etiqueta):
 		etiqueta.text = _texto_de_la_etiqueta
 
 
-# llamar solo si hay ingredientes en la mesa
 func _buscar_en_pasos() -> PackedScene:
 	var llave: String = _llave_de_la_mesa()
-	print("llave: ", llave)
 	if llave in pasos.keys():
 		return pasos[llave]
 	return dummy_ing
 
 
 # Los nombres de lo que hay sobre la mesa, ordenados y unidos con +, que es la forma en
-# que están escritas las llaves de la lista de pasos.
+# que están escritas las llaves de la lista de pasos. Se ordena una copia y no el arreglo
+# de la mesa, porque ese arreglo tiene que quedar en el mismo orden en todas las máquinas.
 func _llave_de_la_mesa() -> String:
-	nom_ingredientes.sort()
-	return "+".join(PackedStringArray(nom_ingredientes))
+	var nombres: Array[String] = nom_ingredientes.duplicate()
+	nombres.sort()
+	return "+".join(PackedStringArray(nombres))
 
 
 func texto_de_ayuda(jugador: Player) -> String:
@@ -219,65 +218,23 @@ func texto_de_ayuda(jugador: Player) -> String:
 		lineas.push_back("Presionar Q para dejar")
 	if pasos.get(_llave_de_la_mesa(), dummy_ing) != dummy_ing:
 		lineas.push_back("Presionar E para preparar")
-	elif ingredientes.size() > 0:
+	elif is_instance_valid(ingrediente_listo):
 		lineas.push_back("Presionar E para tomar")
+	elif ingredientes.size() > 0:
+		lineas.push_back("Presionar E para recuperar")
 	if lineas.is_empty():
 		return "Mesa de preparación"
-	return "
-".join(PackedStringArray(lineas))
+	return "\n".join(PackedStringArray(lineas))
 
 
-@rpc("authority", "call_local", "reliable")
-func _procesar_cocina_en_todos(rutas_a_borrar: Array, scene_path: String, nombre_unico: String) -> void:
-	# 1. Borrar los ingredientes en cada máquina (servidor y clientes)
-	for ruta in rutas_a_borrar:
-		print("ruta a borrar: ", ruta)
-		var nodo_a_borrar = get_node_or_null(ruta)
-		if nodo_a_borrar:
-			print("Eliminando ingrediente visualmente: ", ruta)
-			nodo_a_borrar.queue_free()
-			
-		ingredientes.clear()
-		nom_ingredientes.clear()
+# Quién apretó la tecla. En la llamada local del servidor el emisor remoto llega en cero.
+func _quien_apreto() -> int:
+	var quien: int = multiplayer.get_remote_sender_id()
+	return 1 if quien == 0 else quien
 
-	# 2. Spawnear el nuevo ingrediente resultante en cada máquina
-	var scene = load(scene_path) as PackedScene
-	if scene:
-		var nuevo_ingrediente: Ingrediente = scene.instantiate()
-		print("Spawneando resultado: ", nuevo_ingrediente.nombre_ingrediente)
-		nuevo_ingrediente.name = nombre_unico
-		get_tree().current_scene.add_child(nuevo_ingrediente)
-		nuevo_ingrediente.freeze = true
-		nuevo_ingrediente.global_position = nodo_ing_1.global_position
-		ingrediente_listo = nuevo_ingrediente
-	
-	recibe_ingredientes = false
 
-@rpc("authority", "call_local", "reliable")
-func _sync_retirar_ingrediente_listo(sender_id: int) -> void:
-	if ingrediente_listo == null:
-		return
-		
-	var obj = ingrediente_listo
-	ingrediente_listo = null
-	obj.freeze = false
-	recibe_ingredientes = true # La mesa vuelve a aceptar ingredientes
-
-	if multiplayer.is_server():
-		obj.request_tomar.rpc_id(1, sender_id)
-
-@rpc("authority", "call_local", "reliable")
-func _sync_retirar_y_tomar(sender_id: int) -> void:
-	
-	if ingredientes.size() == 0:
-		print("No hay ingredientes en la mesa para tomar.")
-		return
-	
-	var ing_a_recuperar: Ingrediente = ingredientes.pop_back()
-	if ing_a_recuperar:
-		nom_ingredientes.erase(ing_a_recuperar.nombre_ingrediente)
-		ing_a_recuperar.freeze = false
-
-	#ing_a_recuperar.global_position = nodo_listo.global_position
-	if multiplayer.is_server():
-		ing_a_recuperar.request_tomar.rpc_id(1, sender_id)
+func _get_player_by_peer_id(peer_id: int) -> Player:
+	for p: Node in get_tree().get_nodes_in_group("players"):
+		if p.get_multiplayer_authority() == peer_id:
+			return p as Player
+	return null
