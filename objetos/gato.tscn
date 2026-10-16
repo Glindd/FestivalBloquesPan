@@ -150,7 +150,7 @@ shape = SubResource("BoxShape3D_g4v7s")
 [node name="InputSynchronizer" parent="." unique_id=4225099 instance=ExtResource("2_nxguc")]
 
 [node name="SyncTimer" type="Timer" parent="." unique_id=323297908]
-wait_time = 0.1
+wait_time = 0.05
 
 [node name="SpringArm3D" type="SpringArm3D" parent="." unique_id=1537091664]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.395915, -0.008819757)

@@ -66,6 +66,14 @@ var curAnim: int = IDLE
 # tambien se usa camera_3d
 var objeto_en_mano: Ingrediente = null
 
+# Cuánto le falta a este gato para llegar a donde dijo su dueño. Solo lo usan las copias
+# remotas: el gato propio siempre sabe dónde está.
+var _error_de_red: Vector3 = Vector3.ZERO
+
+# Qué tan rápido se absorbe esa diferencia. Más alto corrige antes y se nota más el
+# tirón, más bajo queda suave pero el gato va más atrasado de lo que de verdad está.
+const VELOCIDAD_DE_CORRECCION: float = 10.0
+
 # El largo del brazo de cámara cuando el jugador camina normal. Cada vez que una
 # animación lo aleja para mostrar al gato entero, este número sirve para notarlo.
 var _largo_normal_de_camara: float = 0.0
@@ -179,14 +187,16 @@ func _unhandled_input(event: InputEvent) -> void:
 			deg_to_rad(camera_max_pitch)
 		)
 
-# El objeto en mano se acomoda en cada cuadro dibujado y no solo en los de física. La
-# cámara gira con cada movimiento del mouse, que llegan más seguido que la física, así
-# que si el objeto se moviera solo con la física iría siempre un paso atrás de la mano y
-# se vería saltando por la pantalla. Las otras máquinas lo siguen recibiendo al ritmo de
-# la física, que para verlo de lejos alcanza y sobra.
-func _process(_delta: float) -> void:
-	if objeto_en_mano and is_multiplayer_authority():
-		objeto_en_mano.global_position = nodo_agarre.global_position
+# Los gatos de los demás llegan diez veces por segundo. En vez de pegarlos de un salto a
+# la posición que avisó su dueño, se arrastra la diferencia de a poco mientras el gato
+# sigue caminando por su cuenta. Así el cuerpo, y con él lo que lleve en la mano, se ve
+# andando y no dando tirones.
+func _process(delta: float) -> void:
+	if is_multiplayer_authority() or _error_de_red.is_zero_approx():
+		return
+	var paso: Vector3 = _error_de_red * clampf(delta * VELOCIDAD_DE_CORRECCION, 0.0, 1.0)
+	global_position += paso
+	_error_de_red -= paso
 	
 func handle_animation(delta: float) -> void:
 	match curAnim:
@@ -252,12 +262,6 @@ func comportamiento_normal(delta: float) -> void:
 		if apuntado:
 			apuntado.is_hovered = true
 				
-	if objeto_en_mano:
-		var target_pos = nodo_agarre.global_position
-		var target_rot = nodo_agarre.global_rotation
-		
-		objeto_en_mano.rpc_id(1, "update_held_position", target_pos, target_rot)
-	
 	if not is_emoteando:
 		
 		#Controlador de la animacion de giro del gato
@@ -486,8 +490,13 @@ func _on_sync_timeout() -> void:
 
 @rpc("call_local", "unreliable")
 func _sync(pos: Vector3, vel: Vector3) -> void:
-	global_position = global_position.lerp(pos, 0.5)
-	velocity = velocity.lerp(vel, 0.5)
+	if is_multiplayer_authority():
+		return
+	# Se guarda cuánto hay que corregir en vez de corregirlo de golpe. El gato remoto
+	# sigue caminando con la velocidad que avisó su dueño y la diferencia se reparte
+	# entre los cuadros siguientes.
+	_error_de_red = pos - global_position
+	velocity = vel
 
 @rpc("call_local","unreliable")
 func _sync2(rot:Vector3) -> void:
