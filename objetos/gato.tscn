@@ -5,6 +5,7 @@
 [ext_resource type="PackedScene" uid="uid://bmng82ys0g0x7" path="res://models/GatoV5_Bone.glb" id="3_5vjbb"]
 [ext_resource type="PackedScene" uid="uid://di6skkic6oys7" path="res://hud/hud.tscn" id="4_a86pc"]
 [ext_resource type="Resource" uid="uid://0jt1wniw86x3" path="res://ui/emotes/emotes_base.tres" id="5_emotes"]
+[ext_resource type="PackedScene" uid="uid://bcvgt0g4rgq5d" path="res://models/ChaquetaTemporal.blend" id="5_u3vet"]
 [ext_resource type="PackedScene" path="res://ui/emotes/rueda_emotes.tscn" id="6_rueda"]
 [ext_resource type="PackedScene" path="res://ui/emotes/burbuja_emote.tscn" id="7_burbuja"]
 [ext_resource type="PackedScene" uid="uid://cn58is8kqida" path="res://ui/tienda/tienda.tscn" id="8_tienda"]
@@ -24,11 +25,6 @@ properties/0/path = NodePath("SpringArm3D:rotation")
 properties/0/spawn = true
 properties/0/replication_mode = 1
 
-[sub_resource type="PrismMesh" id="PrismMesh_yf5fn"]
-
-[sub_resource type="BoxMesh" id="BoxMesh_g4v7s"]
-size = Vector3(1, 3.7961426, 1)
-
 [sub_resource type="AnimationNodeBlend2" id="AnimationNodeBlend2_5vjbb"]
 
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_5vjbb"]
@@ -47,7 +43,7 @@ animation = &"Cube_acción"
 animation = &"Esqueleto_acción_009"
 
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_7fi1i"]
-animation = &"Esqueleto_acción_001"
+animation = &"Esqueleto_acción_006"
 
 [sub_resource type="AnimationNodeBlend2" id="AnimationNodeBlend2_8kx2e"]
 
@@ -94,12 +90,12 @@ graph_offset = Vector2(5.35849, 10)
 [sub_resource type="AnimationNodeBlend2" id="AnimationNodeBlend2_3and3"]
 
 [sub_resource type="AnimationNodeBlendTree" id="AnimationNodeBlendTree_s6x3c"]
-graph_offset = Vector2(-859.3477, -42.424667)
+graph_offset = Vector2(-966.1952, -104.19711)
 nodes/output/position = Vector2(920, 140)
 nodes/Accion/node = SubResource("AnimationNodeBlend2_5vjbb")
 nodes/Accion/position = Vector2(60, 120)
 nodes/Walk/node = SubResource("AnimationNodeBlend2_3and3")
-nodes/Walk/position = Vector2(-420, 120)
+nodes/Walk/position = Vector2(-400, 0)
 nodes/Idle1/node = SubResource("AnimationNodeOneShot_5vjbb")
 nodes/Idle1/position = Vector2(500, 140)
 "nodes/Animation 4/node" = SubResource("AnimationNodeAnimation_q6ihj")
@@ -117,9 +113,9 @@ nodes/Animation/position = Vector2(-620, 440)
 nodes/StateMachine/node = SubResource("AnimationNodeStateMachine_gkk5v")
 nodes/StateMachine/position = Vector2(-227.94353, 411.36588)
 nodes/Arriba/node = SubResource("AnimationNodeBlend2_8kx2e")
-nodes/Arriba/position = Vector2(-660, 60)
+nodes/Arriba/position = Vector2(-760, -60)
 "nodes/Animation 5/node" = SubResource("AnimationNodeAnimation_v0l0n")
-"nodes/Animation 5/position" = Vector2(-1160, 80)
+"nodes/Animation 5/position" = Vector2(-1360, 20)
 "nodes/Animation 6/node" = SubResource("AnimationNodeAnimation_quath")
 "nodes/Animation 6/position" = Vector2(-1200, 340)
 node_connections = [&"output", 0, &"Idle2", &"Accion", 0, &"Run", &"Accion", 1, &"StateMachine", &"Walk", 0, &"Arriba", &"Walk", 1, &"Animation 2", &"Idle1", 0, &"Accion", &"Idle1", 1, &"Animation 3", &"Idle2", 0, &"Idle1", &"Idle2", 1, &"Animation 4", &"Run", 0, &"Walk", &"Run", 1, &"Animation", &"Arriba", 0, &"Animation 5", &"Arriba", 1, &"Animation 6"]
@@ -185,13 +181,8 @@ text = "miau"
 [node name="Capa" type="Node3D" parent="GatoV5_Bone/Esqueleto/Skeleton3D/Cube" parent_id_path=PackedInt32Array(596813472, 674349732) index="1" unique_id=1954437118]
 transform = Transform3D(-4.3711392e-08, 0, -1, 0, 1, 0, 1, 0, -4.3711392e-08, 1.1474845, 3.3067675, 0.0006908691)
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="GatoV5_Bone/Esqueleto/Skeleton3D/Cube/Capa" unique_id=645422256]
-transform = Transform3D(2.8283987, 0, 8.4703295e-22, 0, 2.1746712, 0, -8.4703295e-22, 0, 4.398859, 9.922618e-16, -3.2809982, 0.34339812)
-mesh = SubResource("PrismMesh_yf5fn")
-
-[node name="MeshInstance3D2" type="MeshInstance3D" parent="GatoV5_Bone/Esqueleto/Skeleton3D/Cube/Capa" unique_id=2086654417]
-transform = Transform3D(2.8439083, 0, 1.6940659e-21, 0, 0.9999973, 0, 0, 0, 4.388908, 1.1310397e-15, -6.1798115, 0.39531186)
-mesh = SubResource("BoxMesh_g4v7s")
+[node name="ChaquetaTemporal" parent="GatoV5_Bone/Esqueleto/Skeleton3D/Cube/Capa" unique_id=1274699927 instance=ExtResource("5_u3vet")]
+transform = Transform3D(0.9999998, 0, 0, 0, 0.9999998, 0, 0, 0, 0.9999998, 3.1467884e-15, -3.645136, 1.0979259)
 
 [node name="AnimationTree" type="AnimationTree" parent="GatoV5_Bone" unique_id=1247529766]
 tree_root = SubResource("AnimationNodeBlendTree_s6x3c")

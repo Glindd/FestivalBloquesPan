@@ -41,10 +41,22 @@ materials/extract_format=0
 materials/extract_path=""
 _subresources={
 "nodes": {
+"PATH:AnimationPlayer": {
+"import/skip_import": true
+},
 "PATH:Camera": {
 "import/skip_import": true
 },
+"PATH:Cube": {
+"import/skip_import": true
+},
 "PATH:Light": {
+"import/skip_import": true
+},
+"PATH:Vacío": {
+"import/skip_import": true
+},
+"PATH:Vacío_001": {
 "import/skip_import": true
 }
 }
