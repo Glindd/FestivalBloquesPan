@@ -27,12 +27,6 @@ signal tiempo_trabajando(tiempo: int)
 @onready var action_state_machine: AnimationNodeStateMachinePlayback = animation_tree.get("parameters/StateMachine/playback")
 @onready var t_inicio: float = animation_player.get_animation("Esqueleto_acción_004").length
 
-enum {C,R,L}
-var curRot:int = C
-@onready var intensidadR:float = 0
-@onready var intensidadL:float = 0
-@onready var fuerza_giro:float = 0
-
 enum Posicion {LIBRE, ARRIBA_DE, ABAJO_D}
 var posicion_actual : Posicion = Posicion.LIBRE
 var gato_base: Player = null
@@ -41,16 +35,18 @@ const  OFFSET_ALTURA: Vector3 = Vector3(0,0.5,0)
 @onready var arriba_de: Area3D = $ArribaDe
 @onready var capa: Node3D = $GatoV5_Bone/Esqueleto/Skeleton3D/Cube/Capa
 
-enum {IDLE,WALK,RUN}
+enum {IDLE,WALK,RUN,ARRIBA}
 var curAnim: int = IDLE
 @onready var walk_val: float = 0
 @onready var run: float = 0
+@export var idle2: float = 0
 @export var blend_speed: int = 15
 
 @onready var label_3d: Label3D = $GatoV5_Bone/Esqueleto/Skeleton3D/Cube/Label3D
 
 @onready var spring_arm_3d: SpringArm3D = $SpringArm3D
 @onready var camera_3d: Camera3D = $SpringArm3D/Camera3D
+@onready var fov_base: float = 80.0
 
 @onready var burbuja_emote: BurbujaEmote = $BurbujaEmote
 
@@ -65,6 +61,14 @@ var curAnim: int = IDLE
 @onready var nodo_agarre: Marker3D = $SpringArm3D/Camera3D/GrabArea/GrabTarget
 # tambien se usa camera_3d
 var objeto_en_mano: Ingrediente = null
+
+# Cuánto le falta a este gato para llegar a donde dijo su dueño. Solo lo usan las copias
+# remotas: el gato propio siempre sabe dónde está.
+var _error_de_red: Vector3 = Vector3.ZERO
+
+# Qué tan rápido se absorbe esa diferencia. Más alto corrige antes y se nota más el
+# tirón, más bajo queda suave pero el gato va más atrasado de lo que de verdad está.
+const VELOCIDAD_DE_CORRECCION: float = 10.0
 
 # El largo del brazo de cámara cuando el jugador camina normal. Cada vez que una
 # animación lo aleja para mostrar al gato entero, este número sirve para notarlo.
@@ -179,44 +183,41 @@ func _unhandled_input(event: InputEvent) -> void:
 			deg_to_rad(camera_max_pitch)
 		)
 
-# El objeto en mano se acomoda en cada cuadro dibujado y no solo en los de física. La
-# cámara gira con cada movimiento del mouse, que llegan más seguido que la física, así
-# que si el objeto se moviera solo con la física iría siempre un paso atrás de la mano y
-# se vería saltando por la pantalla. Las otras máquinas lo siguen recibiendo al ritmo de
-# la física, que para verlo de lejos alcanza y sobra.
-func _process(_delta: float) -> void:
-	if objeto_en_mano and is_multiplayer_authority():
-		objeto_en_mano.global_position = nodo_agarre.global_position
+# Los gatos de los demás llegan diez veces por segundo. En vez de pegarlos de un salto a
+# la posición que avisó su dueño, se arrastra la diferencia de a poco mientras el gato
+# sigue caminando por su cuenta. Así el cuerpo, y con él lo que lleve en la mano, se ve
+# andando y no dando tirones.
+func _process(delta: float) -> void:
+	if is_multiplayer_authority() or _error_de_red.is_zero_approx():
+		return
+	var paso: Vector3 = _error_de_red * clampf(delta * VELOCIDAD_DE_CORRECCION, 0.0, 1.0)
+	global_position += paso
+	_error_de_red -= paso
 	
 func handle_animation(delta: float) -> void:
 	match curAnim:
 		IDLE:
 			walk_val = lerpf(walk_val,0,blend_speed*delta)
 			run = lerpf(run,0,blend_speed*delta)
+			idle2 = 0
 		WALK:
 			walk_val = lerpf(walk_val,1.5,blend_speed*delta)
 			run = lerpf(run,0,blend_speed*delta)
+			idle2 = 0
 		RUN:
 			walk_val = lerpf(walk_val,0,blend_speed*delta)
 			run = lerpf(run,1.5,blend_speed*delta)
-
-	match curRot:
-		R:
-			intensidadL = lerpf(intensidadL,0,blend_speed*delta/3)
-			intensidadR = lerpf(intensidadR,fuerza_giro,blend_speed*delta/3)
-		L:
-			intensidadL = lerpf(intensidadL,fuerza_giro,blend_speed*delta/3)
-			intensidadR = lerpf(intensidadR,0,blend_speed*delta/3)
-		C:
-			intensidadL = lerpf(intensidadL,0,blend_speed*delta/3)
-			intensidadR = lerpf(intensidadR,0,blend_speed*delta/3)
+			idle2 = 0
+		ARRIBA:
+			walk_val = 0
+			run = 0
+			idle2 = 1
 	update_tree()
 
 func update_tree() -> void:
 	animation_tree["parameters/Walk/blend_amount"] = walk_val
 	animation_tree["parameters/Run/blend_amount"] = run
-	animation_tree["parameters/RotandoR/add_amount"] = intensidadR
-	animation_tree["parameters/RotandoL/add_amount"] = intensidadL
+	animation_tree["parameters/Arriba/blend_amount"] = idle2
 		
 func _physics_process(delta: float) -> void:
 	match posicion_actual:
@@ -228,6 +229,7 @@ func _physics_process(delta: float) -> void:
 			comportamiento_abajo(delta)	
 	
 func comportamiento_normal(delta: float) -> void:
+	camera_3d.fov = lerpf(camera_3d.fov,fov_base,0.05)
 	speed = lerpf(speed,input_synchronizer.move_speed,0.05)
 	if is_emoteando:
 		velocity.x = move_toward(velocity.x,0,acceleration)
@@ -252,24 +254,7 @@ func comportamiento_normal(delta: float) -> void:
 		if apuntado:
 			apuntado.is_hovered = true
 				
-	if objeto_en_mano:
-		var target_pos = nodo_agarre.global_position
-		var target_rot = nodo_agarre.global_rotation
-		
-		objeto_en_mano.rpc_id(1, "update_held_position", target_pos, target_rot)
-	
 	if not is_emoteando:
-		
-		#Controlador de la animacion de giro del gato
-		var dif_angulo: float = angle_difference(model.rotation.y, spring_arm_3d.rotation.y)
-		var umbral_giro: float = 0.005
-		fuerza_giro = lerpf(fuerza_giro,clampf(absf(dif_angulo) / (PI/4), 0, 1.5),0.2)
-		if dif_angulo > umbral_giro:
-			curRot = R
-		elif dif_angulo < -umbral_giro:
-			curRot = L
-		else:
-			curRot = C
 		
 		#El giro del gato
 		model.rotation.y = lerp_angle(
@@ -313,13 +298,14 @@ func comportamiento_arriba(delta: float) -> void:
 		velocity = Vector3.ZERO
 		#model.global_rotation = gato_base.model.rotation
 		
-		curAnim = IDLE
+		curAnim = ARRIBA
 		handle_animation(delta)
 	if input_synchronizer.jump:
 		desmontarse()
 	
 func comportamiento_abajo(delta: float) -> void:
 	speed = lerpf(speed,input_synchronizer.move_speed,0.05)
+	camera_3d.fov = lerpf(camera_3d.fov, 1 ,0.2)
 	
 	model.rotation.y = lerp_angle(
 			model.rotation.y,
@@ -486,8 +472,13 @@ func _on_sync_timeout() -> void:
 
 @rpc("call_local", "unreliable")
 func _sync(pos: Vector3, vel: Vector3) -> void:
-	global_position = global_position.lerp(pos, 0.5)
-	velocity = velocity.lerp(vel, 0.5)
+	if is_multiplayer_authority():
+		return
+	# Se guarda cuánto hay que corregir en vez de corregirlo de golpe. El gato remoto
+	# sigue caminando con la velocidad que avisó su dueño y la diferencia se reparte
+	# entre los cuadros siguientes.
+	_error_de_red = pos - global_position
+	velocity = vel
 
 @rpc("call_local","unreliable")
 func _sync2(rot:Vector3) -> void:

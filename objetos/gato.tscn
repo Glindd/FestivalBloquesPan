@@ -5,6 +5,7 @@
 [ext_resource type="PackedScene" uid="uid://bmng82ys0g0x7" path="res://models/GatoV5_Bone.glb" id="3_5vjbb"]
 [ext_resource type="PackedScene" uid="uid://di6skkic6oys7" path="res://hud/hud.tscn" id="4_a86pc"]
 [ext_resource type="Resource" uid="uid://0jt1wniw86x3" path="res://ui/emotes/emotes_base.tres" id="5_emotes"]
+[ext_resource type="PackedScene" uid="uid://bcvgt0g4rgq5d" path="res://models/ChaquetaTemporal.blend" id="5_u3vet"]
 [ext_resource type="PackedScene" path="res://ui/emotes/rueda_emotes.tscn" id="6_rueda"]
 [ext_resource type="PackedScene" path="res://ui/emotes/burbuja_emote.tscn" id="7_burbuja"]
 [ext_resource type="PackedScene" uid="uid://cn58is8kqida" path="res://ui/tienda/tienda.tscn" id="8_tienda"]
@@ -24,11 +25,6 @@ properties/0/path = NodePath("SpringArm3D:rotation")
 properties/0/spawn = true
 properties/0/replication_mode = 1
 
-[sub_resource type="PrismMesh" id="PrismMesh_yf5fn"]
-
-[sub_resource type="BoxMesh" id="BoxMesh_g4v7s"]
-size = Vector3(1, 3.7961426, 1)
-
 [sub_resource type="AnimationNodeBlend2" id="AnimationNodeBlend2_5vjbb"]
 
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_5vjbb"]
@@ -41,24 +37,19 @@ animation = &"Esqueleto_acción_002"
 animation = &"Esqueleto_acción_001"
 
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_v0l0n"]
-animation = &"Esqueleto_acción_007"
+animation = &"Cube_acción"
 
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_quath"]
-animation = &"Esqueleto_acción_008"
+animation = &"Esqueleto_acción_009"
 
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_7fi1i"]
 animation = &"Esqueleto_acción_006"
 
-[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_wjo8k"]
-animation = &"Esqueleto_acción_003"
+[sub_resource type="AnimationNodeBlend2" id="AnimationNodeBlend2_8kx2e"]
 
 [sub_resource type="AnimationNodeOneShot" id="AnimationNodeOneShot_5vjbb"]
 
 [sub_resource type="AnimationNodeOneShot" id="AnimationNodeOneShot_a86pc"]
-
-[sub_resource type="AnimationNodeAdd2" id="AnimationNodeAdd2_a86pc"]
-
-[sub_resource type="AnimationNodeAdd2" id="AnimationNodeAdd2_q6ihj"]
 
 [sub_resource type="AnimationNodeBlend2" id="AnimationNodeBlend2_lmid5"]
 
@@ -99,17 +90,18 @@ graph_offset = Vector2(5.35849, 10)
 [sub_resource type="AnimationNodeBlend2" id="AnimationNodeBlend2_3and3"]
 
 [sub_resource type="AnimationNodeBlendTree" id="AnimationNodeBlendTree_s6x3c"]
+graph_offset = Vector2(-966.1952, -104.19711)
 nodes/output/position = Vector2(920, 140)
-nodes/Idle/node = SubResource("AnimationNodeAnimation_wjo8k")
-nodes/Idle/position = Vector2(-1240, -20)
+nodes/Accion/node = SubResource("AnimationNodeBlend2_5vjbb")
+nodes/Accion/position = Vector2(60, 120)
 nodes/Walk/node = SubResource("AnimationNodeBlend2_3and3")
-nodes/Walk/position = Vector2(-420, 120)
+nodes/Walk/position = Vector2(-400, 0)
 nodes/Idle1/node = SubResource("AnimationNodeOneShot_5vjbb")
 nodes/Idle1/position = Vector2(500, 140)
 "nodes/Animation 4/node" = SubResource("AnimationNodeAnimation_q6ihj")
 "nodes/Animation 4/position" = Vector2(460, 540)
 "nodes/Animation 2/node" = SubResource("AnimationNodeAnimation_5vjbb")
-"nodes/Animation 2/position" = Vector2(-820, 360)
+"nodes/Animation 2/position" = Vector2(-880, 380)
 "nodes/Animation 3/node" = SubResource("AnimationNodeAnimation_a86pc")
 "nodes/Animation 3/position" = Vector2(140, 480)
 nodes/Idle2/node = SubResource("AnimationNodeOneShot_a86pc")
@@ -120,17 +112,13 @@ nodes/Animation/node = SubResource("AnimationNodeAnimation_7fi1i")
 nodes/Animation/position = Vector2(-620, 440)
 nodes/StateMachine/node = SubResource("AnimationNodeStateMachine_gkk5v")
 nodes/StateMachine/position = Vector2(-227.94353, 411.36588)
-nodes/Accion/node = SubResource("AnimationNodeBlend2_5vjbb")
-nodes/Accion/position = Vector2(217.32277, 122.86846)
-nodes/RotandoR/node = SubResource("AnimationNodeAdd2_q6ihj")
-nodes/RotandoR/position = Vector2(-820, -100)
+nodes/Arriba/node = SubResource("AnimationNodeBlend2_8kx2e")
+nodes/Arriba/position = Vector2(-760, -60)
 "nodes/Animation 5/node" = SubResource("AnimationNodeAnimation_v0l0n")
-"nodes/Animation 5/position" = Vector2(-1180, -460)
+"nodes/Animation 5/position" = Vector2(-1360, 20)
 "nodes/Animation 6/node" = SubResource("AnimationNodeAnimation_quath")
-"nodes/Animation 6/position" = Vector2(-740, -500)
-nodes/RotandoL/node = SubResource("AnimationNodeAdd2_a86pc")
-nodes/RotandoL/position = Vector2(-620, -100)
-node_connections = [&"output", 0, &"Idle2", &"Walk", 0, &"RotandoL", &"Walk", 1, &"Animation 2", &"Idle1", 0, &"Accion", &"Idle1", 1, &"Animation 3", &"Idle2", 0, &"Idle1", &"Idle2", 1, &"Animation 4", &"Run", 0, &"Walk", &"Run", 1, &"Animation", &"Accion", 0, &"Run", &"Accion", 1, &"StateMachine", &"RotandoR", 0, &"Idle", &"RotandoR", 1, &"Animation 5", &"RotandoL", 0, &"RotandoR", &"RotandoL", 1, &"Animation 6"]
+"nodes/Animation 6/position" = Vector2(-1200, 340)
+node_connections = [&"output", 0, &"Idle2", &"Accion", 0, &"Run", &"Accion", 1, &"StateMachine", &"Walk", 0, &"Arriba", &"Walk", 1, &"Animation 2", &"Idle1", 0, &"Accion", &"Idle1", 1, &"Animation 3", &"Idle2", 0, &"Idle1", &"Idle2", 1, &"Animation 4", &"Run", 0, &"Walk", &"Run", 1, &"Animation", &"Arriba", 0, &"Animation 5", &"Arriba", 1, &"Animation 6"]
 
 [node name="Gato" type="CharacterBody3D" unique_id=620659913 groups=["players"]]
 transform = Transform3D(0.155, 0, 0, 0, 0.155, 0, 0, 0, 0.155, 0, 0, 0)
@@ -150,7 +138,7 @@ shape = SubResource("BoxShape3D_g4v7s")
 [node name="InputSynchronizer" parent="." unique_id=4225099 instance=ExtResource("2_nxguc")]
 
 [node name="SyncTimer" type="Timer" parent="." unique_id=323297908]
-wait_time = 0.1
+wait_time = 0.05
 
 [node name="SpringArm3D" type="SpringArm3D" parent="." unique_id=1537091664]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.395915, -0.008819757)
@@ -175,52 +163,32 @@ replication_config = SubResource("SceneReplicationConfig_nxguc")
 [node name="GatoV5_Bone" parent="." unique_id=596813472 instance=ExtResource("3_5vjbb")]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 0, 0, 0)
 
-[node name="Esqueleto" parent="GatoV5_Bone" index="0" unique_id=439703976]
+[node name="Esqueleto" parent="GatoV5_Bone" index="0" unique_id=284028510]
 transform = Transform3D(0.99999994, 0, 0, 0, 1, 0, 0, 0, 0.99999994, 0.023801684, 0.49323237, -0.00069081783)
 
-[node name="Skeleton3D" parent="GatoV5_Bone/Esqueleto" index="0" unique_id=1480091107]
+[node name="Skeleton3D" parent="GatoV5_Bone/Esqueleto" index="0" unique_id=1390489749]
 transform = Transform3D(1, 0, 0, 0, 0.99999994, 0, 0, 0, 1, -1.1712862, 0, -5.122274e-08)
-bones/0/position = Vector3(-0.26720694, 0.06961281, 0.047438677)
-bones/0/rotation = Quaternion(-0.0411427, 0.06844771, -0.74695843, 0.6600571)
-bones/2/rotation = Quaternion(0.058511954, -8.852476e-05, -0.001842042, 0.9982851)
-bones/7/rotation = Quaternion(-0.22446416, 0.0033185054, -0.3257057, 0.9184338)
-bones/11/rotation = Quaternion(-0.3572447, -0.20078173, 0.047940463, 0.9109142)
-bones/14/rotation = Quaternion(0.075718924, -0.025386315, 0.14007775, 0.9869146)
-bones/15/rotation = Quaternion(3.40072e-08, 7.890025e-09, -0.028889753, 0.99958265)
-bones/16/rotation = Quaternion(-0.004358492, 0.0032817796, 0.51803094, 0.8553445)
-bones/17/rotation = Quaternion(-6.592859e-11, -4.4661813e-10, 3.7282007e-08, 1)
-bones/21/rotation = Quaternion(-0.31248537, -0.07121362, -0.007928798, 0.9472163)
-bones/22/rotation = Quaternion(0.30409178, 0.07157479, 0.00043982954, 0.94995004)
-bones/24/position = Vector3(0.5417587, 0.9829083, 0.35854584)
-bones/25/rotation = Quaternion(0.16333741, -0.10676325, -0.19641426, 0.9609079)
-bones/26/rotation = Quaternion(-0.22002806, -7.0479835e-09, -0.042709943, 0.9745581)
-bones/27/rotation = Quaternion(-0.08942442, -0.0017960814, 0.011130069, 0.99592984)
-bones/28/position = Vector3(0.5417589, 0.9829085, -0.27190456)
-bones/28/rotation = Quaternion(0.56518203, 0.58557755, -0.54899293, 0.19046022)
-bones/29/rotation = Quaternion(0.050415188, -0.09814801, 0.17652057, 0.9780929)
-bones/30/rotation = Quaternion(-0.2157936, 8.922985e-08, -0.03458854, 0.9758262)
+bones/2/rotation = Quaternion(0.05851205, -7.375891e-07, 1.0715464e-08, 0.9982868)
+bones/21/rotation = Quaternion(-0.31248534, -0.07121363, -0.007928816, 0.9472164)
+bones/28/rotation = Quaternion(0.565182, 0.58557755, -0.548993, 0.1904603)
 
-[node name="Label3D" type="Label3D" parent="GatoV5_Bone/Esqueleto/Skeleton3D/Cube" parent_id_path=PackedInt32Array(596813472, 1841502972) index="0" unique_id=282183671]
+[node name="Label3D" type="Label3D" parent="GatoV5_Bone/Esqueleto/Skeleton3D/Cube" parent_id_path=PackedInt32Array(596813472, 674349732) index="0" unique_id=282183671]
 transform = Transform3D(2.7599998, 0, -1.4210855e-14, 0, 2.7599998, 0, 1.4210855e-14, 0, 2.7599998, 3.8063977, 2.936767, 0.117203265)
 visible = false
 billboard = 2
 text = "miau"
 
-[node name="Capa" type="Node3D" parent="GatoV5_Bone/Esqueleto/Skeleton3D/Cube" parent_id_path=PackedInt32Array(596813472, 1841502972) index="1" unique_id=1954437118]
+[node name="Capa" type="Node3D" parent="GatoV5_Bone/Esqueleto/Skeleton3D/Cube" parent_id_path=PackedInt32Array(596813472, 674349732) index="1" unique_id=1954437118]
 transform = Transform3D(-4.3711392e-08, 0, -1, 0, 1, 0, 1, 0, -4.3711392e-08, 1.1474845, 3.3067675, 0.0006908691)
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="GatoV5_Bone/Esqueleto/Skeleton3D/Cube/Capa" unique_id=645422256]
-transform = Transform3D(2.8283987, 0, 8.4703295e-22, 0, 2.1746712, 0, -8.4703295e-22, 0, 4.398859, 9.922618e-16, -3.2809982, 0.34339812)
-mesh = SubResource("PrismMesh_yf5fn")
-
-[node name="MeshInstance3D2" type="MeshInstance3D" parent="GatoV5_Bone/Esqueleto/Skeleton3D/Cube/Capa" unique_id=2086654417]
-transform = Transform3D(2.8439083, 0, 1.6940659e-21, 0, 0.9999973, 0, 0, 0, 4.388908, 1.1310397e-15, -6.1798115, 0.39531186)
-mesh = SubResource("BoxMesh_g4v7s")
+[node name="ChaquetaTemporal" parent="GatoV5_Bone/Esqueleto/Skeleton3D/Cube/Capa" unique_id=1274699927 instance=ExtResource("5_u3vet")]
+transform = Transform3D(0.9999998, 0, 0, 0, 0.9999998, 0, 0, 0, 0.9999998, 3.1467884e-15, -3.645136, 1.0979259)
 
 [node name="AnimationTree" type="AnimationTree" parent="GatoV5_Bone" unique_id=1247529766]
 tree_root = SubResource("AnimationNodeBlendTree_s6x3c")
 advance_expression_base_node = NodePath("../AnimationPlayer")
 anim_player = NodePath("../AnimationPlayer")
+parameters/Accion/blend_amount = 0.0
 parameters/Walk/blend_amount = 0.0
 parameters/Idle1/active = false
 parameters/Idle1/internal_active = false
@@ -229,9 +197,7 @@ parameters/Idle2/active = false
 parameters/Idle2/internal_active = false
 parameters/Idle2/request = 0
 parameters/Run/blend_amount = 0.0
-parameters/Accion/blend_amount = 0.0
-parameters/RotandoR/add_amount = 0.0
-parameters/RotandoL/add_amount = 0.0
+parameters/Arriba/blend_amount = 0.0
 
 [node name="BurbujaEmote" parent="." unique_id=2008976723 instance=ExtResource("7_burbuja")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.8, 0)
