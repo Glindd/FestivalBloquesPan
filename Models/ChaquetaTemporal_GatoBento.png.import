@@ -3,8 +3,8 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://qspb00y3p0gy"
-path.s3tc="res://.godot/imported/ChaquetaTemporal_GatoBento.png-413f05a001432fd6ee4273f3cc5eebcc.s3tc.ctex"
-path.etc2="res://.godot/imported/ChaquetaTemporal_GatoBento.png-413f05a001432fd6ee4273f3cc5eebcc.etc2.ctex"
+path.s3tc="res://.godot/imported/ChaquetaTemporal_GatoBento.png-c7ad6ae01ef716604b529d1e6f23409b.s3tc.ctex"
+path.etc2="res://.godot/imported/ChaquetaTemporal_GatoBento.png-c7ad6ae01ef716604b529d1e6f23409b.etc2.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
@@ -15,8 +15,8 @@ generator_parameters={
 
 [deps]
 
-source_file="res://models/ChaquetaTemporal_GatoBento.png"
-dest_files=["res://.godot/imported/ChaquetaTemporal_GatoBento.png-413f05a001432fd6ee4273f3cc5eebcc.s3tc.ctex", "res://.godot/imported/ChaquetaTemporal_GatoBento.png-413f05a001432fd6ee4273f3cc5eebcc.etc2.ctex"]
+source_file="res://Models/ChaquetaTemporal_GatoBento.png"
+dest_files=["res://.godot/imported/ChaquetaTemporal_GatoBento.png-c7ad6ae01ef716604b529d1e6f23409b.s3tc.ctex", "res://.godot/imported/ChaquetaTemporal_GatoBento.png-c7ad6ae01ef716604b529d1e6f23409b.etc2.ctex"]
 
 [params]
 

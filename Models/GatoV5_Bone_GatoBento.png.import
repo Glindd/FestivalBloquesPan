@@ -3,8 +3,8 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cmc6xuyp6uk7m"
-path.s3tc="res://.godot/imported/GatoV5_Bone_GatoBento.png-daac8b6356c10847b2def50708648c6e.s3tc.ctex"
-path.etc2="res://.godot/imported/GatoV5_Bone_GatoBento.png-daac8b6356c10847b2def50708648c6e.etc2.ctex"
+path.s3tc="res://.godot/imported/GatoV5_Bone_GatoBento.png-190f3cd9fa0175dd013d0a299c2bfd18.s3tc.ctex"
+path.etc2="res://.godot/imported/GatoV5_Bone_GatoBento.png-190f3cd9fa0175dd013d0a299c2bfd18.etc2.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
@@ -15,8 +15,8 @@ generator_parameters={
 
 [deps]
 
-source_file="res://models/GatoV5_Bone_GatoBento.png"
-dest_files=["res://.godot/imported/GatoV5_Bone_GatoBento.png-daac8b6356c10847b2def50708648c6e.s3tc.ctex", "res://.godot/imported/GatoV5_Bone_GatoBento.png-daac8b6356c10847b2def50708648c6e.etc2.ctex"]
+source_file="res://Models/GatoV5_Bone_GatoBento.png"
+dest_files=["res://.godot/imported/GatoV5_Bone_GatoBento.png-190f3cd9fa0175dd013d0a299c2bfd18.s3tc.ctex", "res://.godot/imported/GatoV5_Bone_GatoBento.png-190f3cd9fa0175dd013d0a299c2bfd18.etc2.ctex"]
 
 [params]
 

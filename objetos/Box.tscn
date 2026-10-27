@@ -4,11 +4,6 @@
 [ext_resource type="PackedScene" uid="uid://cetbu7ijb68wf" path="res://objetos/interaccion_area.tscn" id="1_13pef"]
 [ext_resource type="FontFile" uid="uid://c036f4b7ps2mt" path="res://assets/ui/fuentes/Jersey25-Regular.ttf" id="9_fuente"]
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_2rc46"]
-vertex_color_use_as_albedo = true
-
-[sub_resource type="BoxMesh" id="BoxMesh_yf5fn"]
-
 [sub_resource type="BoxShape3D" id="BoxShape3D_yf5fn"]
 size = Vector3(0.4198761, 0.34899902, 0.42004395)
 
@@ -20,17 +15,12 @@ script = ExtResource("1_2rc46")
 
 [node name="AnimatableBody3D" type="AnimatableBody3D" parent="." unique_id=765769244]
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="AnimatableBody3D" unique_id=162234593]
-transform = Transform3D(0.3936983, 0, 0, 0, 0.33023924, 0, 0, 0, 0.40655917, 0, 0, 0)
-material_override = SubResource("StandardMaterial3D_2rc46")
-mesh = SubResource("BoxMesh_yf5fn")
-
 [node name="CollisionShape3D" type="CollisionShape3D" parent="AnimatableBody3D" unique_id=1452948664]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.002494812, 0.0099487305, 0.0025024414)
 shape = SubResource("BoxShape3D_yf5fn")
 
 [node name="Interaccion_area" parent="." unique_id=1987325372 node_paths=PackedStringArray("meshInstance", "label", "Objeto_Interactuable") instance=ExtResource("1_13pef")]
-meshInstance = NodePath("../AnimatableBody3D/MeshInstance3D")
+meshInstance = NodePath("")
 label = NodePath("Label3D")
 Objeto_Interactuable = NodePath("..")
 
