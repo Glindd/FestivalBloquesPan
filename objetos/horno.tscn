@@ -2,12 +2,23 @@
 
 [ext_resource type="PackedScene" uid="uid://dtyaejpfjc5qh" path="res://objetos/Box.tscn" id="1_obf72"]
 [ext_resource type="Script" uid="uid://bxhsn2y3rkao5" path="res://objetos/horno.gd" id="2_i3468"]
+[ext_resource type="PackedScene" uid="uid://de87atgvmlw63" path="res://Models/horno/horno.glb" id="3_weayk"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_fh7lc"]
+size = Vector3(0.707, 0.7, 0.631)
 
 [node name="Caja_Interactuable" unique_id=1986920888 instance=ExtResource("1_obf72")]
 script = ExtResource("2_i3468")
 
+[node name="AnimatableBody3D" parent="." index="0" unique_id=765769244]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.111418754, 0)
+
+[node name="horno" parent="AnimatableBody3D" index="0" unique_id=1026267514 instance=ExtResource("3_weayk")]
+transform = Transform3D(0.2, 0, 0, 0, 0.2, 0, 0, 0, 0.2, 0, 0, 0)
+
 [node name="CollisionShape3D2" parent="Interaccion_area" parent_id_path=PackedInt32Array(1987325372) index="0" unique_id=737107152]
-transform = Transform3D(0.7, 0, 0, 0, 0.7, 0, 0, 0, 0.7, -0.016784668, 0.116622925, 0.0317688)
+transform = Transform3D(0.7, 0, 0, 0, 0.7, 0, 0, 0, 0.7, 0.050109863, 0.16615295, 0.005393982)
+shape = SubResource("BoxShape3D_fh7lc")
 
 [node name="Ingrediente" type="Marker3D" parent="." index="2" unique_id=1500070912]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.2766474, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.07800293, 0.41083378, 0)

@@ -147,19 +147,7 @@ font_size = 64
 outline_size = 18
 
 [node name="Horno" parent="." unique_id=357074113 instance=ExtResource("14_horno")]
-transform = Transform3D(0.72044104, 0, 0.6935161, 0, 1, 0, -0.6935161, 0, 0.72044104, -0.75083333, 0.29050314, -4.6747875)
-
-[node name="LabelHorno" type="Label3D" parent="Horno" unique_id=1030310115]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.51394904, 0)
-pixel_size = 0.0022
-billboard = 1
-texture_filter = 4
-modulate = Color(1, 0.972549, 0.9254902, 1)
-outline_modulate = Color(0.2901961, 0.1960784, 0.1490196, 1)
-text = "Horno"
-font = ExtResource("20_fuente")
-font_size = 64
-outline_size = 18
+transform = Transform3D(0.74754983, 0, -0.6642056, 0, 1, 0, 0.6642056, 0, 0.74754983, -0.75083333, 0.09685743, -4.6747875)
 
 [node name="IngredienteBase" parent="." unique_id=344026824 instance=ExtResource("15_q71s4")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.8504605, 0.121956155, 2.1716383)
