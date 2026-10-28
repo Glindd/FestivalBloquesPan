@@ -2,7 +2,81 @@
 
 [ext_resource type="PackedScene" uid="uid://dtyaejpfjc5qh" path="res://objetos/Box.tscn" id="1_obf72"]
 [ext_resource type="Script" uid="uid://bxhsn2y3rkao5" path="res://objetos/horno.gd" id="2_i3468"]
-[ext_resource type="PackedScene" uid="uid://de87atgvmlw63" path="res://Models/horno/horno.glb" id="3_weayk"]
+[ext_resource type="PackedScene" uid="uid://btpeulxxndl0q" path="res://Models/horno/horno1.glb" id="3_weayk"]
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_fh7lc"]
+animation = &"meter-bandeja"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_gga1j"]
+animation = &"cerrar-puerta"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_xdnmm"]
+animation = &"abrir-puerta"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_144xw"]
+animation = &"sacar-bandeja"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_ta82g"]
+animation = &"cerrar-puerta"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_nwsij"]
+animation = &"abrir-puerta"
+
+[sub_resource type="AnimationNodeBlend2" id="AnimationNodeBlend2_piqgy"]
+
+[sub_resource type="AnimationNodeTransition" id="AnimationNodeTransition_lq1ls"]
+input_0/name = "abrir"
+input_0/auto_advance = true
+input_0/break_loop_at_end = false
+input_0/reset = true
+input_1/name = "meter"
+input_1/auto_advance = true
+input_1/break_loop_at_end = false
+input_1/reset = true
+input_2/name = "cerrar"
+input_2/auto_advance = false
+input_2/break_loop_at_end = false
+input_2/reset = true
+
+[sub_resource type="AnimationNodeTransition" id="AnimationNodeTransition_50tk5"]
+input_0/name = "abrir"
+input_0/auto_advance = true
+input_0/break_loop_at_end = false
+input_0/reset = true
+input_1/name = "sacar"
+input_1/auto_advance = true
+input_1/break_loop_at_end = false
+input_1/reset = true
+input_2/name = "cerrar"
+input_2/auto_advance = false
+input_2/break_loop_at_end = false
+input_2/reset = true
+
+[sub_resource type="AnimationNodeBlendTree" id="AnimationNodeBlendTree_yf5fn"]
+graph_offset = Vector2(-108.41455, 67.08277)
+nodes/output/position = Vector2(1346.6666, 320)
+"nodes/Animation 3/node" = SubResource("AnimationNodeAnimation_gga1j")
+"nodes/Animation 3/position" = Vector2(533.3333, 306.66666)
+nodes/meter-horno/node = SubResource("AnimationNodeTransition_lq1ls")
+nodes/meter-horno/position = Vector2(760, 133.33333)
+"nodes/Animation 2/node" = SubResource("AnimationNodeAnimation_fh7lc")
+"nodes/Animation 2/position" = Vector2(346.66666, 240)
+nodes/Animation/node = SubResource("AnimationNodeAnimation_nwsij")
+nodes/Animation/position = Vector2(186.66667, 146.66667)
+"nodes/Animation 4/node" = SubResource("AnimationNodeAnimation_xdnmm")
+"nodes/Animation 4/position" = Vector2(146.66667, 493.33334)
+nodes/sacar-horno/node = SubResource("AnimationNodeTransition_50tk5")
+nodes/sacar-horno/position = Vector2(773.3333, 506.66666)
+"nodes/Animation 5/node" = SubResource("AnimationNodeAnimation_144xw")
+"nodes/Animation 5/position" = Vector2(306.66666, 613.3333)
+"nodes/Animation 6/node" = SubResource("AnimationNodeAnimation_ta82g")
+"nodes/Animation 6/position" = Vector2(506.66666, 746.6667)
+nodes/blend-horno/node = SubResource("AnimationNodeBlend2_piqgy")
+nodes/blend-horno/position = Vector2(1133.3334, 320)
+node_connections = [&"output", 0, &"blend-horno", &"meter-horno", 0, &"Animation", &"meter-horno", 1, &"Animation 2", &"meter-horno", 2, &"Animation 3", &"sacar-horno", 0, &"Animation 4", &"sacar-horno", 1, &"Animation 5", &"sacar-horno", 2, &"Animation 6", &"blend-horno", 0, &"meter-horno", &"blend-horno", 1, &"sacar-horno"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_rkeaa"]
+size = Vector3(0.42, 0.449, 0.42)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_fh7lc"]
 size = Vector3(0.707, 0.7, 0.631)
@@ -13,8 +87,25 @@ script = ExtResource("2_i3468")
 [node name="AnimatableBody3D" parent="." index="0" unique_id=765769244]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.111418754, 0)
 
-[node name="horno" parent="AnimatableBody3D" index="0" unique_id=1026267514 instance=ExtResource("3_weayk")]
+[node name="horno1" parent="AnimatableBody3D" index="0" unique_id=679878181 instance=ExtResource("3_weayk")]
 transform = Transform3D(0.2, 0, 0, 0, 0.2, 0, 0, 0, 0.2, 0, 0, 0)
+
+[node name="Puerta" parent="AnimatableBody3D/horno1" index="2" unique_id=500117539]
+transform = Transform3D(0.066995084, 0, 0, 0, 0.9366873, 0, 0, 0, 0.93668723, 1.0127614, -0.93668723, 0)
+
+[node name="AnimationTree" type="AnimationTree" parent="AnimatableBody3D/horno1" index="4" unique_id=912230634]
+tree_root = SubResource("AnimationNodeBlendTree_yf5fn")
+anim_player = NodePath("../AnimationPlayer")
+parameters/meter-horno/current_state = "cerrar"
+parameters/meter-horno/transition_request = ""
+parameters/meter-horno/current_index = 2
+parameters/sacar-horno/current_state = "cerrar"
+parameters/sacar-horno/transition_request = ""
+parameters/sacar-horno/current_index = 2
+parameters/blend-horno/blend_amount = 0.0
+
+[node name="CollisionShape3D" parent="AnimatableBody3D" index="1" unique_id=1452948664]
+shape = SubResource("BoxShape3D_rkeaa")
 
 [node name="CollisionShape3D2" parent="Interaccion_area" parent_id_path=PackedInt32Array(1987325372) index="0" unique_id=737107152]
 transform = Transform3D(0.7, 0, 0, 0, 0.7, 0, 0, 0, 0.7, 0.050109863, 0.16615295, 0.005393982)
@@ -22,3 +113,5 @@ shape = SubResource("BoxShape3D_fh7lc")
 
 [node name="Ingrediente" type="Marker3D" parent="." index="2" unique_id=1500070912]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.07800293, 0.41083378, 0)
+
+[editable path="AnimatableBody3D/horno1"]

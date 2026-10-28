@@ -2,9 +2,9 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://l0ec7pdmg4dk"
-path.s3tc="res://.godot/imported/horno_PaintedMetal03_1K_Metallic.png-2fc116c96ec41fbde83365408f8fbd35.s3tc.ctex"
-path.etc2="res://.godot/imported/horno_PaintedMetal03_1K_Metallic.png-2fc116c96ec41fbde83365408f8fbd35.etc2.ctex"
+uid="uid://s1muyhatxc6k"
+path.s3tc="res://.godot/imported/horno1_PaintedMetal03_1K_Metallic.png-17aad0a675290ecbda117c694b717e69.s3tc.ctex"
+path.etc2="res://.godot/imported/horno1_PaintedMetal03_1K_Metallic.png-17aad0a675290ecbda117c694b717e69.etc2.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
@@ -15,8 +15,8 @@ generator_parameters={
 
 [deps]
 
-source_file="res://Models/horno/horno_PaintedMetal03_1K_Metallic.png"
-dest_files=["res://.godot/imported/horno_PaintedMetal03_1K_Metallic.png-2fc116c96ec41fbde83365408f8fbd35.s3tc.ctex", "res://.godot/imported/horno_PaintedMetal03_1K_Metallic.png-2fc116c96ec41fbde83365408f8fbd35.etc2.ctex"]
+source_file="res://Models/horno/horno1_PaintedMetal03_1K_Metallic.png"
+dest_files=["res://.godot/imported/horno1_PaintedMetal03_1K_Metallic.png-17aad0a675290ecbda117c694b717e69.s3tc.ctex", "res://.godot/imported/horno1_PaintedMetal03_1K_Metallic.png-17aad0a675290ecbda117c694b717e69.etc2.ctex"]
 
 [params]
 
