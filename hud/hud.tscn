@@ -8,6 +8,7 @@
 [ext_resource type="Texture2D" uid="uid://b3lucecawd14y" path="res://assets/ui/tienda_y_cierre/btn_tienda.png" id="10_tienda"]
 [ext_resource type="PackedScene" uid="uid://bkr3s3mb8c570" path="res://ui/reloj/reloj_jornada.tscn" id="11_reloj"]
 [ext_resource type="PackedScene" path="res://ui/combo/indicador_combo.tscn" id="14_combo"]
+[ext_resource type="PackedScene" path="res://ui/cansancio/barra_cansancio.tscn" id="15_cansancio"]
 [ext_resource type="Texture2D" uid="uid://bcxav5qrgcxnb" path="res://assets/ui/progreso/barra_meta_dia_fondo.png" id="12_meta_fondo"]
 [ext_resource type="Texture2D" uid="uid://d0ki6anitkcbk" path="res://assets/ui/progreso/barra_meta_dia_relleno.png" id="13_meta_relleno"]
 
@@ -144,3 +145,5 @@ mouse_filter = 2
 texture_under = ExtResource("7_barra_fondo")
 texture_progress = ExtResource("8_barra_relleno")
 texture_progress_offset = Vector2(6, 7)
+
+[node name="BarraCansancio" parent="." instance=ExtResource("15_cansancio")]

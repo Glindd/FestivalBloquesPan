@@ -16,6 +16,7 @@ extends Control
 @onready var barra_trabajo: TextureProgressBar = %BarraTrabajo
 @onready var boton_tienda: Button = %BotonTienda
 @onready var barra_meta: TextureProgressBar = %BarraMeta
+@onready var barra_cansancio: BarraCansancio = $BarraCansancio
 
 func _ready() -> void:
 	if GameManager.instance:
@@ -29,7 +30,15 @@ func _ready() -> void:
 		barra_trabajo.visible = false
 	_preparar_tienda()
 	_preparar_pausa()
+	_preparar_cansancio()
 	_preparar_jornada()
+
+# La barra de aguante solo la sigue el HUD del gato de esta máquina. Los otros gatos traen
+# su propio HUD escondido, y no tiene sentido que anden calculando una barra que nadie ve.
+func _preparar_cansancio() -> void:
+	if not is_multiplayer_authority():
+		return
+	barra_cansancio.seguir(jugador)
 	
 # El botón solo aparece si la escena trae una tienda enlazada. Mientras está abierta el
 # gato deja de caminar, porque el jugador está mirando el panel y no la cocina.

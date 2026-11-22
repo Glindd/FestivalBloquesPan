@@ -32,6 +32,28 @@ var posicion_actual : Posicion = Posicion.LIBRE
 var gato_base: Player = null
 var gato_jinete: Player = null
 const  OFFSET_ALTURA: Vector3 = Vector3(0,0.5,0)
+
+## Cuántos segundos aguanta un gato con otro encima antes de que se le doblen las patas,
+## y cuántos tarda en recuperarse del todo una vez que queda suelto. Se recupera más
+## rápido de lo que se gasta, para que los dos gatos se vayan turnando solos sin tener
+## que quedarse parados esperando.
+const SEGUNDOS_DE_AGUANTE: float = 14.0
+const SEGUNDOS_PARA_RECUPERARSE: float = 8.0
+
+## Desde qué fracción de aguante el de abajo empieza a arrastrar los pies, y qué parte de
+## su velocidad le queda justo antes de que se le caiga la torre. El frenado avisa con el
+## cuerpo que se está acabando, antes de que el jugador alcance a mirar la barra.
+const AGUANTE_DEL_FRENO: float = 0.5
+const FRENO_MAXIMO: float = 0.45
+
+## Cuánto aguante necesita tener un gato para que se le puedan subir encima. Es el mismo
+## corte en que la barra se pone roja, así que lo que el jugador ve en pantalla es
+## exactamente lo que el juego le deja hacer.
+const AGUANTE_MINIMO_PARA_CARGAR: float = 0.25
+
+# Cuántos segundos de aguante le quedan. Lo cuenta cada máquina por su lado.
+var aguante: float = SEGUNDOS_DE_AGUANTE
+
 @onready var arriba_de: Area3D = $ArribaDe
 @onready var capa: Node3D = $GatoV5_Bone/Esqueleto/Skeleton3D/Cube/Capa
 
@@ -221,13 +243,59 @@ func update_tree() -> void:
 	animation_tree["parameters/Arriba/blend_amount"] = idle2
 		
 func _physics_process(delta: float) -> void:
+	_contar_el_aguante(delta)
 	match posicion_actual:
 		Posicion.LIBRE:
-			comportamiento_normal(delta)	
+			comportamiento_normal(delta)
 		Posicion.ARRIBA_DE:
-			comportamiento_arriba(delta)	
+			comportamiento_arriba(delta)
 		Posicion.ABAJO_D:
-			comportamiento_abajo(delta)	
+			comportamiento_abajo(delta)
+
+
+# El aguante lo cuenta cada máquina por su cuenta, igual que la paciencia del cliente: así
+# la barra se mueve pareja en todas y el frenado del de abajo da el mismo número en todas,
+# sin mandar un numerito por la red en cada cuadro. Lo único que se reparte es el momento
+# en que la torre se cae, y eso lo decide el dueño del gato de abajo para que no se
+# desmonte dos veces.
+#
+# El de arriba no se recupera: va cargado, no descansando.
+func _contar_el_aguante(delta: float) -> void:
+	if posicion_actual == Posicion.ABAJO_D:
+		aguante = maxf(aguante - delta, 0.0)
+		if is_zero_approx(aguante) and is_multiplayer_authority():
+			_tirar_la_torre()
+		return
+	if posicion_actual == Posicion.LIBRE and aguante < SEGUNDOS_DE_AGUANTE:
+		var por_segundo: float = SEGUNDOS_DE_AGUANTE / SEGUNDOS_PARA_RECUPERARSE
+		aguante = minf(aguante + delta * por_segundo, SEGUNDOS_DE_AGUANTE)
+
+
+## Cuánto aguante le queda, de 1 a 0. Es lo que mira la barra del HUD.
+func fraccion_de_aguante() -> float:
+	return clampf(aguante / SEGUNDOS_DE_AGUANTE, 0.0, 1.0)
+
+
+## Si este gato tiene a otro encima.
+func esta_cargando() -> bool:
+	return posicion_actual == Posicion.ABAJO_D
+
+
+# Cuánto se le frena el paso al de abajo según lo cansado que esté. Hasta la mitad de la
+# barra camina normal, y de ahí para abajo se va arrastrando cada vez más.
+func _freno_por_cansancio() -> float:
+	var queda: float = fraccion_de_aguante()
+	if queda >= AGUANTE_DEL_FRENO:
+		return 1.0
+	return lerpf(FRENO_MAXIMO, 1.0, queda / AGUANTE_DEL_FRENO)
+
+
+# Al de abajo se le acabó el aguante y la torre se deshace sola. El de arriba no se entera
+# por su cuenta, así que el aviso sale por el mismo rpc que usa el desmonte de siempre.
+func _tirar_la_torre() -> void:
+	if not is_instance_valid(gato_jinete):
+		return
+	gato_jinete.rpc_sincronizar_desmonte.rpc()
 	
 func comportamiento_normal(delta: float) -> void:
 	camera_3d.fov = lerpf(camera_3d.fov,fov_base,0.05)
@@ -305,7 +373,10 @@ func comportamiento_arriba(delta: float) -> void:
 		desmontarse()
 	
 func comportamiento_abajo(delta: float) -> void:
-	speed = lerpf(speed,input_synchronizer.move_speed,0.05)
+	# Cargando al otro, el paso depende de lo cansado que esté. Como el freno se calcula
+	# del aguante y el aguante corre igual en todas las máquinas, el gato se mueve igual
+	# en todas sin tener que sincronizar la velocidad aparte.
+	speed = lerpf(speed,input_synchronizer.move_speed * _freno_por_cansancio(),0.05)
 	camera_3d.fov = lerpf(camera_3d.fov, 1 ,0.2)
 	
 	model.rotation.y = lerp_angle(
@@ -338,8 +409,15 @@ func comportamiento_abajo(delta: float) -> void:
 func intentar_subir(otro_gato: Player) -> void:
 	if not is_multiplayer_authority():
 		return
-	if self.posicion_actual == Posicion.LIBRE and otro_gato.posicion_actual == Posicion.LIBRE:
-		rpc("rpc_sincronizar_apilamiento", otro_gato.get_path())
+	if self.posicion_actual != Posicion.LIBRE or otro_gato.posicion_actual != Posicion.LIBRE:
+		return
+	# Mientras la barra del otro esté roja no se le puede subir nadie encima: tiene que
+	# recuperar hasta salir del rojo. Esto no bota torres armadas, solo impide armar una
+	# nueva. Al gato que ya va cargando no le pasa nada al entrar en rojo: aguanta hasta
+	# que la barra se vacía del todo.
+	if otro_gato.fraccion_de_aguante() <= AGUANTE_MINIMO_PARA_CARGAR:
+		return
+	rpc("rpc_sincronizar_apilamiento", otro_gato.get_path())
 		
 
 @rpc("any_peer", "call_local", "reliable")
