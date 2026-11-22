@@ -10,6 +10,7 @@
 [ext_resource type="PackedScene" path="res://ui/emotes/burbuja_emote.tscn" id="7_burbuja"]
 [ext_resource type="PackedScene" uid="uid://cn58is8kqida" path="res://ui/tienda/tienda.tscn" id="8_tienda"]
 [ext_resource type="PackedScene" uid="uid://xand64yanv2c" path="res://ui/cierre/cierre_de_dia.tscn" id="9_cierre"]
+[ext_resource type="PackedScene" path="res://ui/pausa/menu_pausa.tscn" id="10_pausa"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_57qmd"]
 size = Vector3(2.176, 0.17325294, 4.199)
@@ -204,10 +205,13 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.8, 0)
 
 [node name="InGameUI" type="CanvasLayer" parent="." unique_id=619116339]
 
-[node name="HUD" parent="InGameUI" unique_id=1513608797 node_paths=PackedStringArray("jugador", "tienda", "cierre") instance=ExtResource("4_a86pc")]
+[node name="MenuPausa" parent="InGameUI" instance=ExtResource("10_pausa")]
+
+[node name="HUD" parent="InGameUI" unique_id=1513608797 node_paths=PackedStringArray("jugador", "tienda", "cierre", "pausa") instance=ExtResource("4_a86pc")]
 jugador = NodePath("../..")
 tienda = NodePath("../Tienda")
 cierre = NodePath("../CierreDeDia")
+pausa = NodePath("../MenuPausa")
 
 [node name="RuedaEmotes" parent="InGameUI" unique_id=1347722817 node_paths=PackedStringArray("jugador") instance=ExtResource("6_rueda")]
 jugador = NodePath("../..")

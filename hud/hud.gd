@@ -11,6 +11,8 @@ extends Control
 ## El panel que resume la jornada cuando se acaba el día. También vive fuera del HUD
 ## porque tapa la pantalla entera.
 @export var cierre: CierreDeDia
+## El menú de pausa, que también tapa la pantalla entera y vive fuera del HUD.
+@export var pausa: MenuPausa
 @onready var barra_trabajo: TextureProgressBar = %BarraTrabajo
 @onready var boton_tienda: Button = %BotonTienda
 @onready var barra_meta: TextureProgressBar = %BarraMeta
@@ -26,6 +28,7 @@ func _ready() -> void:
 		hud.hide()
 		barra_trabajo.visible = false
 	_preparar_tienda()
+	_preparar_pausa()
 	_preparar_jornada()
 	
 # El botón solo aparece si la escena trae una tienda enlazada. Mientras está abierta el
@@ -45,6 +48,22 @@ func _abrir_tienda() -> void:
 	hud.hide()
 
 func _al_cerrar_tienda() -> void:
+	_cambiar_marca_de_interfaz(false)
+	hud.visible = is_multiplayer_authority()
+
+# El menú de pausa se comporta igual que la tienda: tapa la pantalla, así que mientras
+# está abierto el HUD se esconde y el gato deja de caminar.
+func _preparar_pausa() -> void:
+	if pausa == null:
+		return
+	pausa.abierto.connect(_al_abrir_la_pausa)
+	pausa.cerrado.connect(_al_cerrar_la_pausa)
+
+func _al_abrir_la_pausa() -> void:
+	_cambiar_marca_de_interfaz(true)
+	hud.hide()
+
+func _al_cerrar_la_pausa() -> void:
 	_cambiar_marca_de_interfaz(false)
 	hud.visible = is_multiplayer_authority()
 

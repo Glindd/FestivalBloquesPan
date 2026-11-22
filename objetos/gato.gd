@@ -150,14 +150,6 @@ func _on_arriba_de_body_entered(body: Node3D) -> void:
 			if body.is_multiplayer_authority() and body.posicion_actual == Posicion.LIBRE:
 				body.intentar_subir(self)
 
-func _input(event: InputEvent) -> void:
-	#Mouse
-	if event.is_action_pressed("Menu"):
-		if Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
-			Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
-		else:
-			Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
-
 func _unhandled_input(event: InputEvent) -> void:
 	if not is_multiplayer_authority():
 		return
@@ -176,9 +168,10 @@ func _unhandled_input(event: InputEvent) -> void:
 
 	var mouse_motion: InputEventMouseMotion = event as InputEventMouseMotion
 	if mouse_motion:
-		spring_arm_3d.rotation.y = spring_arm_3d.rotation.y - input_synchronizer.mouse_vector.x * mouse_sensitivy
+		var sensibilidad: float = _sensibilidad_del_mouse()
+		spring_arm_3d.rotation.y = spring_arm_3d.rotation.y - input_synchronizer.mouse_vector.x * sensibilidad
 		camera_3d.rotation.x = clamp(
-			camera_3d.rotation.x - input_synchronizer.mouse_vector.y * mouse_sensitivy,
+			camera_3d.rotation.x - input_synchronizer.mouse_vector.y * sensibilidad,
 			deg_to_rad(camera_min_pitch),
 			deg_to_rad(camera_max_pitch)
 		)
@@ -187,6 +180,14 @@ func _unhandled_input(event: InputEvent) -> void:
 # la posición que avisó su dueño, se arrastra la diferencia de a poco mientras el gato
 # sigue caminando por su cuenta. Así el cuerpo, y con él lo que lleve en la mano, se ve
 # andando y no dando tirones.
+# La sensibilidad sale de los ajustes del jugador. Mientras no haya ajustes cargados se
+# usa la del inspector, que es la que trae la escena.
+func _sensibilidad_del_mouse() -> float:
+	if Configuracion.instance:
+		return Configuracion.instance.sensibilidad_del_mouse
+	return mouse_sensitivy
+
+
 func _process(delta: float) -> void:
 	if is_multiplayer_authority() or _error_de_red.is_zero_approx():
 		return
