@@ -130,7 +130,10 @@ func _execute_interaction() -> void:
 				# recetario y no de un número escrito a mano.
 				var receta_pedida: RecetaDef = Recetario.instance.recetas.buscar_por_id(plato_entregado)
 				if receta_pedida:
-					GameManager.instance.añadir_dinero(receta_pedida.precio_venta)
+					# Entregar varios panes seguidos sube la racha, y la racha multiplica
+					# lo que paga cada uno.
+					var multiplicador: float = Jornada.instance.encadenar_entrega()
+					GameManager.instance.añadir_dinero(int(roundf(receta_pedida.precio_venta * multiplicador)))
 				Jornada.instance.anotar_cliente_atendido()
 				Jornada.instance.anotar_pan_entregado()
 				

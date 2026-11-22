@@ -7,6 +7,7 @@
 [ext_resource type="Texture2D" uid="uid://dr6xwbclkifqa" path="res://assets/ui/progreso/barra_simple_relleno.png" id="8_barra_relleno"]
 [ext_resource type="Texture2D" uid="uid://b3lucecawd14y" path="res://assets/ui/tienda_y_cierre/btn_tienda.png" id="10_tienda"]
 [ext_resource type="PackedScene" uid="uid://bkr3s3mb8c570" path="res://ui/reloj/reloj_jornada.tscn" id="11_reloj"]
+[ext_resource type="PackedScene" path="res://ui/combo/indicador_combo.tscn" id="14_combo"]
 [ext_resource type="Texture2D" uid="uid://bcxav5qrgcxnb" path="res://assets/ui/progreso/barra_meta_dia_fondo.png" id="12_meta_fondo"]
 [ext_resource type="Texture2D" uid="uid://d0ki6anitkcbk" path="res://assets/ui/progreso/barra_meta_dia_relleno.png" id="13_meta_relleno"]
 
@@ -97,6 +98,8 @@ offset_top = 10.0
 offset_right = 84.0
 offset_bottom = 172.0
 grow_horizontal = 2
+
+[node name="IndicadorCombo" parent="." instance=ExtResource("14_combo")]
 
 [node name="PanelMeta" type="Control" parent="." unique_id=1231949488]
 layout_mode = 1
