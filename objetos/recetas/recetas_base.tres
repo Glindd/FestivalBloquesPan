@@ -7,6 +7,8 @@
 [ext_resource type="Texture2D" uid="uid://kg8edok2vnqs" path="res://assets/ui/hud/ing_harina.png" id="5_harina"]
 [ext_resource type="Texture2D" uid="uid://l2xgxwlcx5ap" path="res://assets/ui/hud/ing_agua.png" id="6_agua"]
 [ext_resource type="Texture2D" uid="uid://dkuc0soo23708" path="res://assets/ui/hud/ing_levadura.png" id="7_levadura"]
+[ext_resource type="PackedScene" uid="uid://b06gq7brfr2ov" path="res://objetos/ingredientes/amasado.tscn" id="8_pan_amasado"]
+[ext_resource type="PackedScene" uid="uid://b7edxtiyopshf" path="res://objetos/ingredientes/masa_madre.tscn" id="9_pan_masa_madre"]
 
 [sub_resource type="Resource" id="Resource_oh3hi"]
 script = ExtResource("1_j85sn")
@@ -14,6 +16,7 @@ id = &"pan_amasado"
 nombre = "Pan amasado"
 ingredientes = Array[String](["agua", "harina"])
 icono = ExtResource("2_uigxb")
+resultado = ExtResource("8_pan_amasado")
 precio_venta = 10
 disponible_al_inicio = true
 
@@ -23,6 +26,7 @@ id = &"pan_masa_madre"
 nombre = "Pan masa madre"
 ingredientes = Array[String](["agua", "harina", "levadura"])
 icono = ExtResource("3_7pt7k")
+resultado = ExtResource("9_pan_masa_madre")
 precio_venta = 25
 precio_compra = 100
 segundos_preparacion = 5.0
