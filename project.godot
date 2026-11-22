@@ -27,6 +27,7 @@ Lobby="res://autoloads/lobby.tscn"
 GameManager="uid://b8a60luep3vjk"
 Recetario="res://objetos/recetas/recetario.tscn"
 Jornada="res://scripts/jornada.tscn"
+Configuracion="res://scripts/configuracion.tscn"
 
 [debug]
 
