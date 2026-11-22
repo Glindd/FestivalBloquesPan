@@ -1,28 +1,20 @@
 [gd_scene format=3 uid="uid://b06gq7brfr2ov"]
 
 [ext_resource type="PackedScene" uid="uid://l2af6dmxdm7e" path="res://objetos/ingredientes/ingrediente_base.tscn" id="1_sq57i"]
-[ext_resource type="Texture2D" uid="uid://7wyvjp0c3de3" path="res://Texturas/pan_horneado.jpg" id="2_hc5de"]
+[ext_resource type="PackedScene" uid="uid://dxq132up6jomo" path="res://Models/platos/amasado.glb" id="2_sq57i"]
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_jlsev"]
-albedo_texture = ExtResource("2_hc5de")
-
-[sub_resource type="SphereMesh" id="SphereMesh_yfy57"]
-
-[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_y5kkv"]
-radius = 0.061035156
-height = 0.16644287
+[sub_resource type="BoxShape3D" id="BoxShape3D_hc5de"]
+size = Vector3(0.5, 0.1, 0.5)
 
 [node name="IngredienteBase" unique_id=344026824 instance=ExtResource("1_sq57i")]
 nombre_ingrediente = "pan_amasado"
 
-[node name="MeshInstance3D" parent="." index="0" unique_id=2021670818]
-transform = Transform3D(0.15, 0, 0, 0, 0.1, 0, 0, 0, 0.15, 0, 0, 0)
-material_override = SubResource("StandardMaterial3D_jlsev")
-mesh = SubResource("SphereMesh_yfy57")
+[node name="amasado" parent="." index="0" unique_id=1681792204 instance=ExtResource("2_sq57i")]
+transform = Transform3D(0.3, 0, 0, 0, 0.3, 0, 0, 0, 0.3, 0, 0, 0)
 
 [node name="CollisionShape3D" parent="." index="1" unique_id=502487091]
-transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, -0.0070495605, -0.0029512125, 0)
-shape = SubResource("CapsuleShape3D_y5kkv")
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0070495605, -0.0029512125, 0)
+shape = SubResource("BoxShape3D_hc5de")
 
 [node name="Label3D" parent="." index="3" unique_id=859107585]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.41922808, 0)

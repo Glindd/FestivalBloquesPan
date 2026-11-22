@@ -19,8 +19,7 @@ script = ExtResource("1_2rc46")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.002494812, 0.0099487305, 0.0025024414)
 shape = SubResource("BoxShape3D_yf5fn")
 
-[node name="Interaccion_area" parent="." unique_id=1987325372 node_paths=PackedStringArray("meshInstance", "label", "Objeto_Interactuable") instance=ExtResource("1_13pef")]
-meshInstance = NodePath("")
+[node name="Interaccion_area" parent="." unique_id=1987325372 node_paths=PackedStringArray("label", "Objeto_Interactuable") instance=ExtResource("1_13pef")]
 label = NodePath("Label3D")
 Objeto_Interactuable = NodePath("..")
 

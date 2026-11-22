@@ -1,27 +1,20 @@
 [gd_scene format=3 uid="uid://1sngp7ik5hvm"]
 
 [ext_resource type="PackedScene" uid="uid://l2af6dmxdm7e" path="res://objetos/ingredientes/ingrediente_base.tscn" id="1_jdycf"]
-[ext_resource type="Texture2D" uid="uid://bir2ala4lefku" path="res://Texturas/masa_cruda.jpg" id="2_7u34c"]
+[ext_resource type="PackedScene" uid="uid://bbi2uo1e50jjd" path="res://Models/platos/amasado-crudo.glb" id="2_7u34c"]
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_x1y3b"]
-albedo_texture = ExtResource("2_7u34c")
-
-[sub_resource type="SphereMesh" id="SphereMesh_i8r1x"]
-
-[sub_resource type="CylinderShape3D" id="CylinderShape3D_nlnjw"]
-height = 0.046279907
-radius = 0.047851563
+[sub_resource type="BoxShape3D" id="BoxShape3D_7u34c"]
+size = Vector3(0.55, 0.1, 0.5)
 
 [node name="IngredienteBase" unique_id=344026824 instance=ExtResource("1_jdycf")]
 nombre_ingrediente = "amasado_crudo"
 
-[node name="MeshInstance3D" parent="." index="0" unique_id=2021670818]
-transform = Transform3D(0.09999986, 0, 0.00017453286, 0, 0.05, 0, -0.00017453286, 0, 0.09999986, 0, 0, 0)
-material_override = SubResource("StandardMaterial3D_x1y3b")
-mesh = SubResource("SphereMesh_i8r1x")
+[node name="amasado-crudo" parent="." index="0" unique_id=1870932717 instance=ExtResource("2_7u34c")]
+transform = Transform3D(0.3, 0, 0, 0, 0.3, 0, 0, 0, 0.3, 0, 0, 0)
 
 [node name="CollisionShape3D" parent="." index="1" unique_id=502487091]
-shape = SubResource("CylinderShape3D_nlnjw")
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.02319336, 0)
+shape = SubResource("BoxShape3D_7u34c")
 
 [node name="Label3D" parent="." index="3" unique_id=859107585]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.42964602, 0)

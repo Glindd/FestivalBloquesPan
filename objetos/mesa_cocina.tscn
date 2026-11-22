@@ -2,24 +2,32 @@
 
 [ext_resource type="PackedScene" uid="uid://dtyaejpfjc5qh" path="res://objetos/Box.tscn" id="1_ayiuj"]
 [ext_resource type="Script" uid="uid://dqoe18ecql8p2" path="res://objetos/mesa_cocina.gd" id="2_ppp1j"]
+[ext_resource type="PackedScene" uid="uid://dldbs83cry8nm" path="res://Models/muebles/mesa.glb" id="3_ppp1j"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_oeyor"]
+size = Vector3(0.6, 0.25, 0.3)
 
 [node name="MesaCocina" unique_id=1986920888 instance=ExtResource("1_ayiuj")]
 script = ExtResource("2_ppp1j")
 
-[node name="MeshInstance3D" parent="AnimatableBody3D" parent_id_path=PackedInt32Array(765769244) index="0" unique_id=162234593]
-transform = Transform3D(0.7, 0, 0, 0, 0.33, 0, 0, 0, 0.407, 0, 0, 0)
+[node name="mesa" parent="AnimatableBody3D" parent_id_path=PackedInt32Array(765769244) index="0" unique_id=1878493371 instance=ExtResource("3_ppp1j")]
+transform = Transform3D(0.3, 0, 0, 0, 0.3, 0, 0, 0, 0.3, 0, 0.12238407, 0)
+
+[node name="CollisionShape3D" parent="AnimatableBody3D" parent_id_path=PackedInt32Array(765769244) index="1" unique_id=1452948664]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.002494812, -0.01573944, 0.01020813)
+shape = SubResource("BoxShape3D_oeyor")
 
 [node name="CollisionShape3D2" parent="Interaccion_area" parent_id_path=PackedInt32Array(1987325372) index="0" unique_id=737107152]
 transform = Transform3D(1.3, 0, 0, 0, 0.867, 0, 0, 0, 0.867, -0.016784668, 0.116622925, 0.0317688)
 
 [node name="Ingrediente1" type="Marker3D" parent="." index="2" unique_id=1659682518]
-transform = Transform3D(1.5, 0, 0, 0, 1, 0, 0, 0, 1, 0.27234453, 0.20483845, 0.010007858)
+transform = Transform3D(1.5, 0, 0, 0, 1, 0, 0, 0, 1, 0.27234453, 0.10797566, 0.010007858)
 
 [node name="Ingrediente2" type="Marker3D" parent="." index="3" unique_id=1026136970]
-transform = Transform3D(1.5, 0, 0, 0, 1, 0, 0, 0, 1, -0.24889165, 0.18761444, -0.0064585507)
+transform = Transform3D(1.5, 0, 0, 0, 1, 0, 0, 0, 1, -0.24889165, 0.10170746, -0.0064585507)
 
 [node name="IngredienteListo" type="Marker3D" parent="." index="4" unique_id=72896542]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.07787579, 0.5234796)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.121358216, 0.5234796)
 
 [node name="Ingrediente3" type="Marker3D" parent="." index="5" unique_id=684968699]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.19148576, 0.1359235)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.11442125, 0.1359235)

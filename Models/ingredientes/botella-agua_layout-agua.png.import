@@ -2,21 +2,21 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://s1muyhatxc6k"
-path.s3tc="res://.godot/imported/horno1_PaintedMetal03_1K_Metallic.png-17aad0a675290ecbda117c694b717e69.s3tc.ctex"
-path.etc2="res://.godot/imported/horno1_PaintedMetal03_1K_Metallic.png-17aad0a675290ecbda117c694b717e69.etc2.ctex"
+uid="uid://dxecrp1oah2im"
+path.s3tc="res://.godot/imported/botella-agua_layout-agua.png-9afcc3c314c69bd74f4b47527a3561bf.s3tc.ctex"
+path.etc2="res://.godot/imported/botella-agua_layout-agua.png-9afcc3c314c69bd74f4b47527a3561bf.etc2.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 generator_parameters={
-"md5": "7bf546ac2b72b51408ed7a91b57cd276"
+"md5": "69f935599f902c992926e739d3728d61"
 }
 
 [deps]
 
-source_file="res://Models/horno/horno1_PaintedMetal03_1K_Metallic.png"
-dest_files=["res://.godot/imported/horno1_PaintedMetal03_1K_Metallic.png-17aad0a675290ecbda117c694b717e69.s3tc.ctex", "res://.godot/imported/horno1_PaintedMetal03_1K_Metallic.png-17aad0a675290ecbda117c694b717e69.etc2.ctex"]
+source_file="res://Models/ingredientes/botella-agua_layout-agua.png"
+dest_files=["res://.godot/imported/botella-agua_layout-agua.png-9afcc3c314c69bd74f4b47527a3561bf.s3tc.ctex", "res://.godot/imported/botella-agua_layout-agua.png-9afcc3c314c69bd74f4b47527a3561bf.etc2.ctex"]
 
 [params]
 

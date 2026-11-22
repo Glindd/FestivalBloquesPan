@@ -81,7 +81,7 @@ spawn_path = NodePath("../Players")
 script = ExtResource("7_60hjd")
 
 [node name="EstanteHarina" parent="." unique_id=1909886683 instance=ExtResource("8_uwlw6")]
-transform = Transform3D(-0.6533298, 0, -0.75707334, 0, 1, 0, 0.75707334, 0, -0.6533298, 2.867281, 0.23423243, -2.6382468)
+transform = Transform3D(-0.6533298, 0, -0.75707334, 0, 1, 0, 0.75707334, 0, -0.6533298, 2.867281, 0.00837183, -2.6382468)
 tipo_de_ingrediente = ExtResource("9_xjfos")
 
 [node name="LabelHarina" type="Label3D" parent="EstanteHarina" unique_id=1520773207]
@@ -113,7 +113,7 @@ font_size = 64
 outline_size = 18
 
 [node name="MesaCocina" parent="." unique_id=523979813 instance=ExtResource("11_pg8uc")]
-transform = Transform3D(-0.6533298, 0, -0.75707334, 0, 1, 0, 0.75707334, 0, -0.6533298, 1.2681776, 0.23423243, -3.4370272)
+transform = Transform3D(-0.6533298, 0, -0.75707334, 0, 1, 0, 0.75707334, 0, -0.6533298, 1.2681776, 0.15050364, -3.4370272)
 
 [node name="LabelMesa" type="Label3D" parent="MesaCocina" unique_id=895834363]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.55237234, 0)

@@ -8,6 +8,7 @@ extends ObjetoInteractuable
 # ya no estaba.
 
 @onready var nodo_ing: Marker3D = $Ingrediente
+@onready var animation_tree: AnimationTree = $AnimatableBody3D/horno2/AnimationTree
 
 var ingrediente: Ingrediente
 var dummy_ing: PackedScene = preload("res://objetos/ingredientes/dummy_ing.tscn") as PackedScene
@@ -18,7 +19,6 @@ var pasos: Dictionary = {
 	"pan_amasado": dummy_ing
 }
 
-
 # con q se mete lo que se trae en la mano
 @rpc("any_peer", "call_local", "reliable")
 func _execute_interaction_q() -> void:
@@ -27,6 +27,8 @@ func _execute_interaction_q() -> void:
 	if is_instance_valid(ingrediente):
 		return
 
+	print("ejecutando q en horno")
+	
 	var quien: int = _quien_apreto()
 	var jugador: Player = _get_player_by_peer_id(quien)
 	
@@ -70,11 +72,13 @@ func _meter_en_el_horno(ruta: NodePath, pos: Vector3) -> void:
 		return
 	ingrediente = ing
 	ing.dejar_en_mueble(pos)
+	animation_tree.set("parameters/Transition/transition_request", "meter")
 
 
 @rpc("authority", "call_local", "reliable")
 func _sacar_del_horno() -> void:
 	ingrediente = null
+	animation_tree.set("parameters/Transition/transition_request", "sacar")
 
 
 @rpc("authority", "call_local", "reliable")
@@ -87,6 +91,7 @@ func _hornear_en_todos(ruta_a_borrar: NodePath, ruta_escena: String, nombre_unic
 	var escena: PackedScene = load(ruta_escena) as PackedScene
 	if escena == null:
 		return
+	animation_tree.set("parameters/Transition/transition_request", "hornear")
 	var nuevo: Ingrediente = escena.instantiate() as Ingrediente
 	nuevo.name = nombre_unico
 	get_tree().current_scene.add_child(nuevo)

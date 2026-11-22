@@ -2,9 +2,9 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://db7m4cd74whoa"
-path.s3tc="res://.godot/imported/horno1_PaintedMetal03_1K_BaseColor_Rojo_Liso.png-7375f632b5db530785d5c8e32746a0fe.s3tc.ctex"
-path.etc2="res://.godot/imported/horno1_PaintedMetal03_1K_BaseColor_Rojo_Liso.png-7375f632b5db530785d5c8e32746a0fe.etc2.ctex"
+uid="uid://bbcmhi8fgvaur"
+path.s3tc="res://.godot/imported/horno2_PaintedMetal03_1K_BaseColor_Rojo_Liso.png-7ffee3536aeb3d066ff3ad91567a51ef.s3tc.ctex"
+path.etc2="res://.godot/imported/horno2_PaintedMetal03_1K_BaseColor_Rojo_Liso.png-7ffee3536aeb3d066ff3ad91567a51ef.etc2.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
@@ -15,8 +15,8 @@ generator_parameters={
 
 [deps]
 
-source_file="res://Models/horno/horno1_PaintedMetal03_1K_BaseColor_Rojo_Liso.png"
-dest_files=["res://.godot/imported/horno1_PaintedMetal03_1K_BaseColor_Rojo_Liso.png-7375f632b5db530785d5c8e32746a0fe.s3tc.ctex", "res://.godot/imported/horno1_PaintedMetal03_1K_BaseColor_Rojo_Liso.png-7375f632b5db530785d5c8e32746a0fe.etc2.ctex"]
+source_file="res://Models/horno/horno2_PaintedMetal03_1K_BaseColor_Rojo_Liso.png"
+dest_files=["res://.godot/imported/horno2_PaintedMetal03_1K_BaseColor_Rojo_Liso.png-7ffee3536aeb3d066ff3ad91567a51ef.s3tc.ctex", "res://.godot/imported/horno2_PaintedMetal03_1K_BaseColor_Rojo_Liso.png-7ffee3536aeb3d066ff3ad91567a51ef.etc2.ctex"]
 
 [params]
 
