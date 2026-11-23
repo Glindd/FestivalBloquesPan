@@ -6,6 +6,7 @@
 [ext_resource type="Texture2D" uid="uid://c8pesskrfpkvj" path="res://assets/ui/progreso/barra_simple_fondo.png" id="7_barra_fondo"]
 [ext_resource type="Texture2D" uid="uid://dr6xwbclkifqa" path="res://assets/ui/progreso/barra_simple_relleno.png" id="8_barra_relleno"]
 [ext_resource type="Texture2D" uid="uid://b3lucecawd14y" path="res://assets/ui/tienda_y_cierre/btn_tienda.png" id="10_tienda"]
+[ext_resource type="Texture2D" uid="uid://cvnneuj4u4bg2" path="res://assets/ui/tienda_y_cierre/btn_bolsa_monedas.png" id="16_mejoras"]
 [ext_resource type="PackedScene" uid="uid://bkr3s3mb8c570" path="res://ui/reloj/reloj_jornada.tscn" id="11_reloj"]
 [ext_resource type="PackedScene" path="res://ui/combo/indicador_combo.tscn" id="14_combo"]
 [ext_resource type="PackedScene" path="res://ui/cansancio/barra_cansancio.tscn" id="15_cansancio"]
@@ -21,6 +22,17 @@ modulate_color = Color(0.88, 0.84, 0.8, 1)
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_tienda_realce"]
 texture = ExtResource("10_tienda")
+modulate_color = Color(1.1, 1.06, 1, 1)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_mejoras"]
+texture = ExtResource("16_mejoras")
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_mejoras_presionado"]
+texture = ExtResource("16_mejoras")
+modulate_color = Color(0.88, 0.84, 0.8, 1)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_mejoras_realce"]
+texture = ExtResource("16_mejoras")
 modulate_color = Color(1.1, 1.06, 1, 1)
 
 [node name="HUD" type="Control" unique_id=396489273]
@@ -107,10 +119,10 @@ layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
-offset_left = -223.0
+offset_left = -232.0
 offset_top = 84.0
 offset_right = -24.0
-offset_bottom = 140.0
+offset_bottom = 143.0
 grow_horizontal = 0
 mouse_filter = 2
 
@@ -119,7 +131,7 @@ unique_name_in_owner = true
 layout_mode = 0
 offset_right = 604.0
 offset_bottom = 169.0
-scale = Vector2(0.33, 0.33)
+scale = Vector2(0.3444, 0.3444)
 mouse_filter = 2
 texture_under = ExtResource("12_meta_fondo")
 texture_progress = ExtResource("13_meta_relleno")
@@ -147,3 +159,15 @@ texture_progress = ExtResource("8_barra_relleno")
 texture_progress_offset = Vector2(6, 7)
 
 [node name="BarraCansancio" parent="." instance=ExtResource("15_cansancio")]
+
+[node name="BotonMejoras" type="Button" parent="." unique_id=1261763525]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = -1
+offset_left = 24.0
+offset_top = 88.0
+offset_right = 81.0
+offset_bottom = 148.0
+theme_override_styles/normal = SubResource("StyleBoxTexture_mejoras")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_mejoras_presionado")
+theme_override_styles/hover = SubResource("StyleBoxTexture_mejoras_realce")

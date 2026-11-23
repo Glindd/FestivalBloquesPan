@@ -13,10 +13,13 @@ extends Control
 @export var cierre: CierreDeDia
 ## El menú de pausa, que también tapa la pantalla entera y vive fuera del HUD.
 @export var pausa: MenuPausa
+## El árbol de mejoras, que tapa la pantalla igual que la tienda.
+@export var arbol: PanelArbol
 @onready var barra_trabajo: TextureProgressBar = %BarraTrabajo
 @onready var boton_tienda: Button = %BotonTienda
 @onready var barra_meta: TextureProgressBar = %BarraMeta
 @onready var barra_cansancio: BarraCansancio = $BarraCansancio
+@onready var boton_mejoras: Button = %BotonMejoras
 
 func _ready() -> void:
 	if GameManager.instance:
@@ -29,6 +32,7 @@ func _ready() -> void:
 		hud.hide()
 		barra_trabajo.visible = false
 	_preparar_tienda()
+	_preparar_arbol()
 	_preparar_pausa()
 	_preparar_cansancio()
 	_preparar_jornada()
@@ -57,6 +61,25 @@ func _abrir_tienda() -> void:
 	hud.hide()
 
 func _al_cerrar_tienda() -> void:
+	_cambiar_marca_de_interfaz(false)
+	hud.visible = is_multiplayer_authority()
+
+# El árbol de mejoras se abre y se cierra igual que la tienda: tapa la pantalla entera,
+# así que mientras está abierto el HUD se esconde y el gato deja de caminar. El botón
+# solo aparece si la escena trae un árbol enlazado.
+func _preparar_arbol() -> void:
+	boton_mejoras.visible = arbol != null
+	if arbol == null:
+		return
+	boton_mejoras.pressed.connect(_abrir_arbol)
+	arbol.cerrada.connect(_al_cerrar_el_arbol)
+
+func _abrir_arbol() -> void:
+	arbol.abrir()
+	_cambiar_marca_de_interfaz(true)
+	hud.hide()
+
+func _al_cerrar_el_arbol() -> void:
 	_cambiar_marca_de_interfaz(false)
 	hud.visible = is_multiplayer_authority()
 

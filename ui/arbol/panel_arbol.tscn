@@ -1,0 +1,227 @@
+[gd_scene load_steps=15 format=3]
+
+[ext_resource type="Script" path="res://ui/arbol/panel_arbol.gd" id="1_arbol"]
+[ext_resource type="Theme" uid="uid://c1h8f62iw8uqo" path="res://ui/Theme/panacats_theme.tres" id="2_tema"]
+[ext_resource type="PackedScene" path="res://ui/arbol/medallon_mejora.tscn" id="3_medallon"]
+[ext_resource type="Texture2D" uid="uid://dcategtouhxb6" path="res://assets/ui/tienda_y_cierre/cinta_titulo.png" id="4_cinta"]
+[ext_resource type="Texture2D" uid="uid://b7solx2vt2acp" path="res://assets/ui/hud/panel_monedas.png" id="5_monedas"]
+[ext_resource type="Texture2D" uid="uid://cl1rtdg3maxjn" path="res://assets/ui/lobby_y_botones/btn_cerrar.png" id="6_cerrar"]
+[ext_resource type="Texture2D" uid="uid://cr65iexuf208c" path="res://assets/ui/lobby_y_botones/tooltip_crema.png" id="7_globo"]
+[ext_resource type="Texture2D" uid="uid://c4ot4eserfqms" path="res://assets/ui/menus/panel_grande_1.png" id="12_panel"]
+[ext_resource type="PackedScene" uid="uid://bkr3s3mb8c570" path="res://ui/reloj/reloj_jornada.tscn" id="13_reloj"]
+[ext_resource type="Texture2D" path="res://assets/ui/arbol/rama_vertical.png" id="8_vertical"]
+[ext_resource type="Texture2D" path="res://assets/ui/arbol/rama_horizontal.png" id="9_horizontal"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_marco"]
+content_margin_left = 28.0
+content_margin_top = 24.0
+content_margin_right = 28.0
+content_margin_bottom = 24.0
+texture = ExtResource("12_panel")
+texture_margin_left = 34.0
+texture_margin_top = 34.0
+texture_margin_right = 34.0
+texture_margin_bottom = 34.0
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_cerrar"]
+texture = ExtResource("6_cerrar")
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_sin_fondo"]
+
+[node name="PanelArbol" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("2_tema")
+script = ExtResource("1_arbol")
+escena_medallon = ExtResource("3_medallon")
+dibujo_rama_vertical = ExtResource("8_vertical")
+dibujo_rama_horizontal = ExtResource("9_horizontal")
+
+[node name="Oscurecer" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_type_variation = &"Darker"
+
+[node name="Marco" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -440.0
+offset_top = -286.0
+offset_right = 440.0
+offset_bottom = 326.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxTexture_marco")
+
+[node name="Reloj" parent="Marco" instance=ExtResource("13_reloj")]
+custom_minimum_size = Vector2(0, 0)
+layout_mode = 1
+anchors_preset = 0
+offset_left = 20.0
+offset_top = 16.0
+offset_right = 124.0
+offset_bottom = 116.0
+tamano_digitos = 16
+
+[node name="Ramas" type="Control" parent="Marco"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Lienzo" type="Control" parent="Marco"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="PanelMonedas" type="TextureRect" parent="Marco"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -104.0
+offset_top = 54.0
+offset_right = 104.0
+offset_bottom = 114.0
+grow_horizontal = 2
+mouse_filter = 2
+texture = ExtResource("5_monedas")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Dinero" type="Label" parent="Marco/PanelMonedas"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 70.0
+offset_top = 6.0
+offset_right = -16.0
+offset_bottom = -8.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_type_variation = &"Numero"
+theme_override_font_sizes/font_size = 26
+text = "0"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="BotonCerrar" type="Button" parent="Marco"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -74.0
+offset_top = 18.0
+offset_right = -18.0
+offset_bottom = 74.0
+grow_horizontal = 0
+theme_override_styles/normal = SubResource("StyleBoxTexture_cerrar")
+theme_override_styles/hover = SubResource("StyleBoxTexture_cerrar")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_cerrar")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_sin_fondo")
+
+[node name="Cinta" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -220.0
+offset_top = -340.0
+offset_right = 220.0
+offset_bottom = -240.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("4_cinta")
+expand_mode = 1
+
+[node name="Titulo" type="Label" parent="Cinta"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.1287
+anchor_top = 0.1163
+anchor_right = 0.8759
+anchor_bottom = 0.6379
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_type_variation = &"Titulo"
+theme_override_colors/font_color = Color(0.9647059, 0.9411765, 0.8941176, 1)
+theme_override_font_sizes/font_size = 34
+text = "Mejoras"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Globo" type="TextureRect" parent="."]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(470, 176)
+layout_mode = 0
+offset_right = 470.0
+offset_bottom = 176.0
+mouse_filter = 2
+texture = ExtResource("7_globo")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="NombreMejora" type="Label" parent="Globo"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_left = 46.0
+offset_top = 24.0
+offset_right = -46.0
+offset_bottom = 60.0
+grow_horizontal = 2
+mouse_filter = 2
+theme_type_variation = &"Subtitulo"
+theme_override_font_sizes/font_size = 22
+text = "Mejora"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="DetalleMejora" type="Label" parent="Globo"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_left = 46.0
+offset_top = 60.0
+offset_right = -46.0
+offset_bottom = 136.0
+grow_horizontal = 2
+mouse_filter = 2
+theme_type_variation = &"Pista"
+theme_override_font_sizes/font_size = 16
+text = "Qué hace"
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 2

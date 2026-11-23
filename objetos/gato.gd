@@ -54,7 +54,12 @@ const AGUANTE_MINIMO_PARA_CARGAR: float = 0.25
 # Cuántos segundos de aguante le quedan. Lo cuenta cada máquina por su lado.
 var aguante: float = SEGUNDOS_DE_AGUANTE
 
+# Hasta cuánto llegaba el aguante la última vez que se miró. Sirve para darse cuenta de
+# que una mejora recién comprada agrandó el tope.
+var _tope_de_aguante: float = SEGUNDOS_DE_AGUANTE
+
 @onready var arriba_de: Area3D = $ArribaDe
+@onready var globo_cansancio: GloboCansancio = $GloboCansancio
 @onready var capa: Node3D = $GatoV5_Bone/Esqueleto/Skeleton3D/Cube/Capa
 
 enum {IDLE,WALK,RUN,ARRIBA}
@@ -101,6 +106,9 @@ func _ready() -> void:
 	sync_timer.timeout.connect(_on_sync_timeout)
 	
 	arriba_de.body_entered.connect(_on_arriba_de_body_entered)
+	if Mejoras.instance:
+		Mejoras.instance.mejora_comprada.connect(_al_comprarse_una_mejora)
+		_tope_de_aguante = aguante_maximo()
 	
 	var player_data: Statics.PlayerData = Game.instance.get_player(get_multiplayer_authority())
 	label_3d.text = player_data.name
@@ -244,6 +252,7 @@ func update_tree() -> void:
 		
 func _physics_process(delta: float) -> void:
 	_contar_el_aguante(delta)
+	_mostrar_el_cansancio()
 	match posicion_actual:
 		Posicion.LIBRE:
 			comportamiento_normal(delta)
@@ -261,19 +270,76 @@ func _physics_process(delta: float) -> void:
 #
 # El de arriba no se recupera: va cargado, no descansando.
 func _contar_el_aguante(delta: float) -> void:
+	var maximo: float = aguante_maximo()
 	if posicion_actual == Posicion.ABAJO_D:
 		aguante = maxf(aguante - delta, 0.0)
 		if is_zero_approx(aguante) and is_multiplayer_authority():
 			_tirar_la_torre()
 		return
-	if posicion_actual == Posicion.LIBRE and aguante < SEGUNDOS_DE_AGUANTE:
-		var por_segundo: float = SEGUNDOS_DE_AGUANTE / SEGUNDOS_PARA_RECUPERARSE
-		aguante = minf(aguante + delta * por_segundo, SEGUNDOS_DE_AGUANTE)
+	if posicion_actual == Posicion.LIBRE and aguante < maximo:
+		var por_segundo: float = maximo / _segundos_para_recuperarse()
+		aguante = minf(aguante + delta * por_segundo, maximo)
+
+
+# Una mejora que agranda el aguante lo deja además lleno. Sin esto el tope subía pero el
+# gato seguía con lo que tenía adentro, así que el jugador se subía encima al tiro, veía
+# que aguantaba lo mismo de siempre y daba por hecho que su compra no había servido.
+#
+# Se mira si el tope creció y no de qué mejora se trata, para que el gato no tenga que
+# saber cuál de todas toca el aguante.
+func _al_comprarse_una_mejora(_id_mejora: StringName) -> void:
+	var tope: float = aguante_maximo()
+	if tope > _tope_de_aguante:
+		aguante = tope
+	_tope_de_aguante = tope
+
+
+## Cuántos segundos de aguante caben, ya contando lo que haya comprado la panadería.
+func aguante_maximo() -> float:
+	if Mejoras.instance:
+		return SEGUNDOS_DE_AGUANTE * Mejoras.instance.factor_de_aguante()
+	return SEGUNDOS_DE_AGUANTE
+
+
+func _segundos_para_recuperarse() -> float:
+	if Mejoras.instance:
+		return SEGUNDOS_PARA_RECUPERARSE * Mejoras.instance.factor_de_recuperacion()
+	return SEGUNDOS_PARA_RECUPERARSE
+
+
+# La velocidad que pide el jugador, ya con la mejora de la panadería aplicada. Sale de
+# acá y no de cada comportamiento para que caminar, ir arriba y ir abajo usen el mismo
+# número y no se desarmen entre sí.
+func _velocidad_objetivo() -> float:
+	if Mejoras.instance:
+		return input_synchronizer.move_speed * Mejoras.instance.factor_de_velocidad()
+	return input_synchronizer.move_speed
+
+
+# El globo que ven los demás. Lo muestra el gato de arriba, porque el de abajo se esconde
+# entero al armarse la torre y un hijo suyo tampoco se dibujaría.
+#
+# Suelto también se muestra mientras se esté recuperando, así el resto sabe cuándo vuelve
+# a estar en condiciones de cargar a alguien.
+func _mostrar_el_cansancio() -> void:
+	# Nunca se le muestra al dueño del gato del que cuelga. Yendo arriba le quedaba
+	# justo delante de la cámara tapándole la vista, y recuperándose suelto le repetía
+	# en el mundo la misma barra que ya tiene en el HUD. Es información para los otros.
+	if is_multiplayer_authority():
+		globo_cansancio.esconder()
+		return
+	if posicion_actual == Posicion.ARRIBA_DE and is_instance_valid(gato_base):
+		globo_cansancio.mostrar(gato_base.fraccion_de_aguante())
+		return
+	if posicion_actual == Posicion.LIBRE and fraccion_de_aguante() < 1.0:
+		globo_cansancio.mostrar(fraccion_de_aguante())
+		return
+	globo_cansancio.esconder()
 
 
 ## Cuánto aguante le queda, de 1 a 0. Es lo que mira la barra del HUD.
 func fraccion_de_aguante() -> float:
-	return clampf(aguante / SEGUNDOS_DE_AGUANTE, 0.0, 1.0)
+	return clampf(aguante / maxf(aguante_maximo(), 0.001), 0.0, 1.0)
 
 
 ## Si este gato tiene a otro encima.
@@ -299,7 +365,7 @@ func _tirar_la_torre() -> void:
 	
 func comportamiento_normal(delta: float) -> void:
 	camera_3d.fov = lerpf(camera_3d.fov,fov_base,0.05)
-	speed = lerpf(speed,input_synchronizer.move_speed,0.05)
+	speed = lerpf(speed,_velocidad_objetivo(),0.05)
 	if is_emoteando:
 		velocity.x = move_toward(velocity.x,0,acceleration)
 		velocity.z = move_toward(velocity.z,0,acceleration)
@@ -376,7 +442,7 @@ func comportamiento_abajo(delta: float) -> void:
 	# Cargando al otro, el paso depende de lo cansado que esté. Como el freno se calcula
 	# del aguante y el aguante corre igual en todas las máquinas, el gato se mueve igual
 	# en todas sin tener que sincronizar la velocidad aparte.
-	speed = lerpf(speed,input_synchronizer.move_speed * _freno_por_cansancio(),0.05)
+	speed = lerpf(speed,_velocidad_objetivo() * _freno_por_cansancio(),0.05)
 	camera_3d.fov = lerpf(camera_3d.fov, 1 ,0.2)
 	
 	model.rotation.y = lerp_angle(
