@@ -14,7 +14,6 @@
 [ext_resource type="PackedScene" uid="uid://c1ii0yoyavka" path="res://objetos/NPC/Recepcion.tscn" id="12_1wwit"]
 [ext_resource type="PackedScene" uid="uid://cnjflu5k247wb" path="res://objetos/ingredientes/levadura.tscn" id="13_lvdra"]
 [ext_resource type="PackedScene" uid="uid://wpbny152rtsb" path="res://objetos/horno.tscn" id="14_horno"]
-[ext_resource type="PackedScene" uid="uid://b06gq7brfr2ov" path="res://objetos/ingredientes/amasado.tscn" id="15_q71s4"]
 [ext_resource type="FontFile" uid="uid://c036f4b7ps2mt" path="res://assets/ui/fuentes/Jersey25-Regular.ttf" id="20_fuente"]
 
 [sub_resource type="Environment" id="Environment_g4v7s"]
@@ -148,6 +147,3 @@ outline_size = 18
 
 [node name="Horno" parent="." unique_id=357074113 instance=ExtResource("14_horno")]
 transform = Transform3D(0.74754983, 0, -0.6642056, 0, 1, 0, 0.6642056, 0, 0.74754983, -0.75083333, 0.09685743, -4.6747875)
-
-[node name="IngredienteBase" parent="." unique_id=344026824 instance=ExtResource("15_q71s4")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.8504605, 0.121956155, 2.1716383)
