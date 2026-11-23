@@ -169,9 +169,14 @@ func multiplicador_de_racha(largo: int) -> float:
 ## Cuántos segundos quedan para encadenar cuando la racha va en ese largo. Sin racha
 ## devuelve el plazo más ancho, que es con el que arranca la primera entrega.
 func segundos_de_racha(largo: int) -> float:
-	if largo <= 0:
-		return SEGUNDOS_DE_RACHA[0]
-	return SEGUNDOS_DE_RACHA[mini(largo - 1, SEGUNDOS_DE_RACHA.size() - 1)]
+	var base: float = SEGUNDOS_DE_RACHA[0]
+	if largo > 0:
+		base = SEGUNDOS_DE_RACHA[mini(largo - 1, SEGUNDOS_DE_RACHA.size() - 1)]
+	# El plazo se estira con lo que la panadería haya comprado en el árbol. Va acá y no
+	# en cada lugar que lo usa, para que el servidor y la barra del HUD midan lo mismo.
+	if Mejoras.instance:
+		return base * Mejoras.instance.factor_de_ventana_de_racha()
+	return base
 
 
 # La racha se enfría sola. El que lleva el reloj es el servidor, y cuando se le acaba el

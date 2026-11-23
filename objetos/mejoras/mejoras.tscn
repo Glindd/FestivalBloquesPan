@@ -1,0 +1,8 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://objetos/mejoras/mejoras.gd" id="1_mejoras"]
+[ext_resource type="Resource" path="res://objetos/mejoras/mejoras_base.tres" id="2_arbol"]
+
+[node name="Mejoras" type="Node"]
+script = ExtResource("1_mejoras")
+arbol = ExtResource("2_arbol")

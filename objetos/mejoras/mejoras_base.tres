@@ -1,0 +1,109 @@
+[gd_resource type="Resource" script_class="MejoraSet" format=3]
+
+[ext_resource type="Script" path="res://objetos/mejoras/mejora_def.gd" id="1_def"]
+[ext_resource type="Script" path="res://objetos/mejoras/mejora_set.gd" id="2_set"]
+[ext_resource type="Texture2D" path="res://assets/ui/arbol/mejora_buen_ojo.png" id="3_buen_ojo"]
+[ext_resource type="Texture2D" path="res://assets/ui/arbol/mejora_clientela_fiel.png" id="4_clientela"]
+[ext_resource type="Texture2D" path="res://assets/ui/arbol/mejora_racha_larga.png" id="5_racha"]
+[ext_resource type="Texture2D" path="res://assets/ui/arbol/mejora_clientes_pacientes.png" id="6_pacientes"]
+[ext_resource type="Texture2D" path="res://assets/ui/arbol/mejora_boca_a_boca.png" id="7_boca"]
+[ext_resource type="Texture2D" path="res://assets/ui/arbol/mejora_lomo_firme.png" id="8_lomo"]
+[ext_resource type="Texture2D" path="res://assets/ui/arbol/mejora_segundo_aire.png" id="9_aire"]
+[ext_resource type="Texture2D" path="res://assets/ui/arbol/mejora_patas_ligeras.png" id="10_patas"]
+
+[sub_resource type="Resource" id="Resource_buen_ojo"]
+script = ExtResource("1_def")
+id = &"buen_ojo"
+nombre = "Buen ojo"
+descripcion = "Todo el pan se vende un 25% más caro."
+icono = ExtResource("3_buen_ojo")
+precio = 60
+rama = 0
+escalon = 0
+factor = 1.25
+
+[sub_resource type="Resource" id="Resource_clientela_fiel"]
+script = ExtResource("1_def")
+id = &"clientela_fiel"
+nombre = "Clientela fiel"
+descripcion = "Otro 25% encima, acumulado con Buen ojo."
+icono = ExtResource("4_clientela")
+precio = 140
+requiere = &"buen_ojo"
+rama = 0
+escalon = 1
+factor = 1.25
+
+[sub_resource type="Resource" id="Resource_racha_larga"]
+script = ExtResource("1_def")
+id = &"racha_larga"
+nombre = "Racha larga"
+descripcion = "Queda 50% más tiempo para encadenar la siguiente entrega."
+icono = ExtResource("5_racha")
+precio = 220
+requiere = &"clientela_fiel"
+rama = 0
+escalon = 2
+factor = 1.5
+
+[sub_resource type="Resource" id="Resource_clientes_pacientes"]
+script = ExtResource("1_def")
+id = &"clientes_pacientes"
+nombre = "Clientes pacientes"
+descripcion = "Los clientes aguantan un 30% más antes de irse."
+icono = ExtResource("6_pacientes")
+precio = 60
+rama = 1
+escalon = 0
+factor = 1.3
+
+[sub_resource type="Resource" id="Resource_boca_a_boca"]
+script = ExtResource("1_def")
+id = &"boca_a_boca"
+nombre = "Boca a boca"
+descripcion = "Llegan clientes con más frecuencia."
+icono = ExtResource("7_boca")
+precio = 160
+requiere = &"clientes_pacientes"
+rama = 1
+escalon = 1
+factor = 0.7
+
+[sub_resource type="Resource" id="Resource_lomo_firme"]
+script = ExtResource("1_def")
+id = &"lomo_firme"
+nombre = "Lomo firme"
+descripcion = "El gato de abajo aguanta un 50% más con otro encima."
+icono = ExtResource("8_lomo")
+precio = 60
+rama = 2
+escalon = 0
+factor = 1.5
+
+[sub_resource type="Resource" id="Resource_segundo_aire"]
+script = ExtResource("1_def")
+id = &"segundo_aire"
+nombre = "Segundo aire"
+descripcion = "El aguante se recupera al doble de rápido."
+icono = ExtResource("9_aire")
+precio = 120
+requiere = &"lomo_firme"
+rama = 2
+escalon = 1
+factor = 0.5
+
+[sub_resource type="Resource" id="Resource_patas_ligeras"]
+script = ExtResource("1_def")
+id = &"patas_ligeras"
+nombre = "Patas ligeras"
+descripcion = "Los gatos caminan y corren un 20% más rápido."
+icono = ExtResource("10_patas")
+precio = 200
+requiere = &"segundo_aire"
+rama = 2
+escalon = 2
+factor = 1.2
+
+[resource]
+script = ExtResource("2_set")
+mejoras = Array[ExtResource("1_def")]([SubResource("Resource_buen_ojo"), SubResource("Resource_clientela_fiel"), SubResource("Resource_racha_larga"), SubResource("Resource_clientes_pacientes"), SubResource("Resource_boca_a_boca"), SubResource("Resource_lomo_firme"), SubResource("Resource_segundo_aire"), SubResource("Resource_patas_ligeras")])
