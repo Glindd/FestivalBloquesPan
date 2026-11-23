@@ -32,7 +32,34 @@ var posicion_actual : Posicion = Posicion.LIBRE
 var gato_base: Player = null
 var gato_jinete: Player = null
 const  OFFSET_ALTURA: Vector3 = Vector3(0,0.5,0)
+
+## Cuántos segundos aguanta un gato con otro encima antes de que se le doblen las patas,
+## y cuántos tarda en recuperarse del todo una vez que queda suelto. Se recupera más
+## rápido de lo que se gasta, para que los dos gatos se vayan turnando solos sin tener
+## que quedarse parados esperando.
+const SEGUNDOS_DE_AGUANTE: float = 14.0
+const SEGUNDOS_PARA_RECUPERARSE: float = 8.0
+
+## Desde qué fracción de aguante el de abajo empieza a arrastrar los pies, y qué parte de
+## su velocidad le queda justo antes de que se le caiga la torre. El frenado avisa con el
+## cuerpo que se está acabando, antes de que el jugador alcance a mirar la barra.
+const AGUANTE_DEL_FRENO: float = 0.5
+const FRENO_MAXIMO: float = 0.45
+
+## Cuánto aguante necesita tener un gato para que se le puedan subir encima. Es el mismo
+## corte en que la barra se pone roja, así que lo que el jugador ve en pantalla es
+## exactamente lo que el juego le deja hacer.
+const AGUANTE_MINIMO_PARA_CARGAR: float = 0.25
+
+# Cuántos segundos de aguante le quedan. Lo cuenta cada máquina por su lado.
+var aguante: float = SEGUNDOS_DE_AGUANTE
+
+# Hasta cuánto llegaba el aguante la última vez que se miró. Sirve para darse cuenta de
+# que una mejora recién comprada agrandó el tope.
+var _tope_de_aguante: float = SEGUNDOS_DE_AGUANTE
+
 @onready var arriba_de: Area3D = $ArribaDe
+@onready var globo_cansancio: GloboCansancio = $GloboCansancio
 @onready var capa: Node3D = $GatoV5_Bone/Esqueleto/Skeleton3D/Cube/Capa
 
 enum {IDLE,WALK,RUN,ARRIBA}
@@ -79,6 +106,9 @@ func _ready() -> void:
 	sync_timer.timeout.connect(_on_sync_timeout)
 	
 	arriba_de.body_entered.connect(_on_arriba_de_body_entered)
+	if Mejoras.instance:
+		Mejoras.instance.mejora_comprada.connect(_al_comprarse_una_mejora)
+		_tope_de_aguante = aguante_maximo()
 	
 	var player_data: Statics.PlayerData = Game.instance.get_player(get_multiplayer_authority())
 	label_3d.text = player_data.name
@@ -150,14 +180,6 @@ func _on_arriba_de_body_entered(body: Node3D) -> void:
 			if body.is_multiplayer_authority() and body.posicion_actual == Posicion.LIBRE:
 				body.intentar_subir(self)
 
-func _input(event: InputEvent) -> void:
-	#Mouse
-	if event.is_action_pressed("Menu"):
-		if Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
-			Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
-		else:
-			Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
-
 func _unhandled_input(event: InputEvent) -> void:
 	if not is_multiplayer_authority():
 		return
@@ -176,9 +198,10 @@ func _unhandled_input(event: InputEvent) -> void:
 
 	var mouse_motion: InputEventMouseMotion = event as InputEventMouseMotion
 	if mouse_motion:
-		spring_arm_3d.rotation.y = spring_arm_3d.rotation.y - input_synchronizer.mouse_vector.x * mouse_sensitivy
+		var sensibilidad: float = _sensibilidad_del_mouse()
+		spring_arm_3d.rotation.y = spring_arm_3d.rotation.y - input_synchronizer.mouse_vector.x * sensibilidad
 		camera_3d.rotation.x = clamp(
-			camera_3d.rotation.x - input_synchronizer.mouse_vector.y * mouse_sensitivy,
+			camera_3d.rotation.x - input_synchronizer.mouse_vector.y * sensibilidad,
 			deg_to_rad(camera_min_pitch),
 			deg_to_rad(camera_max_pitch)
 		)
@@ -187,6 +210,14 @@ func _unhandled_input(event: InputEvent) -> void:
 # la posición que avisó su dueño, se arrastra la diferencia de a poco mientras el gato
 # sigue caminando por su cuenta. Así el cuerpo, y con él lo que lleve en la mano, se ve
 # andando y no dando tirones.
+# La sensibilidad sale de los ajustes del jugador. Mientras no haya ajustes cargados se
+# usa la del inspector, que es la que trae la escena.
+func _sensibilidad_del_mouse() -> float:
+	if Configuracion.instance:
+		return Configuracion.instance.sensibilidad_del_mouse
+	return mouse_sensitivy
+
+
 func _process(delta: float) -> void:
 	if is_multiplayer_authority() or _error_de_red.is_zero_approx():
 		return
@@ -220,17 +251,121 @@ func update_tree() -> void:
 	animation_tree["parameters/Arriba/blend_amount"] = idle2
 		
 func _physics_process(delta: float) -> void:
+	_contar_el_aguante(delta)
+	_mostrar_el_cansancio()
 	match posicion_actual:
 		Posicion.LIBRE:
-			comportamiento_normal(delta)	
+			comportamiento_normal(delta)
 		Posicion.ARRIBA_DE:
-			comportamiento_arriba(delta)	
+			comportamiento_arriba(delta)
 		Posicion.ABAJO_D:
-			comportamiento_abajo(delta)	
+			comportamiento_abajo(delta)
+
+
+# El aguante lo cuenta cada máquina por su cuenta, igual que la paciencia del cliente: así
+# la barra se mueve pareja en todas y el frenado del de abajo da el mismo número en todas,
+# sin mandar un numerito por la red en cada cuadro. Lo único que se reparte es el momento
+# en que la torre se cae, y eso lo decide el dueño del gato de abajo para que no se
+# desmonte dos veces.
+#
+# El de arriba no se recupera: va cargado, no descansando.
+func _contar_el_aguante(delta: float) -> void:
+	var maximo: float = aguante_maximo()
+	if posicion_actual == Posicion.ABAJO_D:
+		aguante = maxf(aguante - delta, 0.0)
+		if is_zero_approx(aguante) and is_multiplayer_authority():
+			_tirar_la_torre()
+		return
+	if posicion_actual == Posicion.LIBRE and aguante < maximo:
+		var por_segundo: float = maximo / _segundos_para_recuperarse()
+		aguante = minf(aguante + delta * por_segundo, maximo)
+
+
+# Una mejora que agranda el aguante lo deja además lleno. Sin esto el tope subía pero el
+# gato seguía con lo que tenía adentro, así que el jugador se subía encima al tiro, veía
+# que aguantaba lo mismo de siempre y daba por hecho que su compra no había servido.
+#
+# Se mira si el tope creció y no de qué mejora se trata, para que el gato no tenga que
+# saber cuál de todas toca el aguante.
+func _al_comprarse_una_mejora(_id_mejora: StringName) -> void:
+	var tope: float = aguante_maximo()
+	if tope > _tope_de_aguante:
+		aguante = tope
+	_tope_de_aguante = tope
+
+
+## Cuántos segundos de aguante caben, ya contando lo que haya comprado la panadería.
+func aguante_maximo() -> float:
+	if Mejoras.instance:
+		return SEGUNDOS_DE_AGUANTE * Mejoras.instance.factor_de_aguante()
+	return SEGUNDOS_DE_AGUANTE
+
+
+func _segundos_para_recuperarse() -> float:
+	if Mejoras.instance:
+		return SEGUNDOS_PARA_RECUPERARSE * Mejoras.instance.factor_de_recuperacion()
+	return SEGUNDOS_PARA_RECUPERARSE
+
+
+# La velocidad que pide el jugador, ya con la mejora de la panadería aplicada. Sale de
+# acá y no de cada comportamiento para que caminar, ir arriba y ir abajo usen el mismo
+# número y no se desarmen entre sí.
+func _velocidad_objetivo() -> float:
+	if Mejoras.instance:
+		return input_synchronizer.move_speed * Mejoras.instance.factor_de_velocidad()
+	return input_synchronizer.move_speed
+
+
+# El globo que ven los demás. Lo muestra el gato de arriba, porque el de abajo se esconde
+# entero al armarse la torre y un hijo suyo tampoco se dibujaría.
+#
+# Suelto también se muestra mientras se esté recuperando, así el resto sabe cuándo vuelve
+# a estar en condiciones de cargar a alguien.
+func _mostrar_el_cansancio() -> void:
+	# Nunca se le muestra al dueño del gato del que cuelga. Yendo arriba le quedaba
+	# justo delante de la cámara tapándole la vista, y recuperándose suelto le repetía
+	# en el mundo la misma barra que ya tiene en el HUD. Es información para los otros.
+	if is_multiplayer_authority():
+		globo_cansancio.esconder()
+		return
+	if posicion_actual == Posicion.ARRIBA_DE and is_instance_valid(gato_base):
+		globo_cansancio.mostrar(gato_base.fraccion_de_aguante())
+		return
+	if posicion_actual == Posicion.LIBRE and fraccion_de_aguante() < 1.0:
+		globo_cansancio.mostrar(fraccion_de_aguante())
+		return
+	globo_cansancio.esconder()
+
+
+## Cuánto aguante le queda, de 1 a 0. Es lo que mira la barra del HUD.
+func fraccion_de_aguante() -> float:
+	return clampf(aguante / maxf(aguante_maximo(), 0.001), 0.0, 1.0)
+
+
+## Si este gato tiene a otro encima.
+func esta_cargando() -> bool:
+	return posicion_actual == Posicion.ABAJO_D
+
+
+# Cuánto se le frena el paso al de abajo según lo cansado que esté. Hasta la mitad de la
+# barra camina normal, y de ahí para abajo se va arrastrando cada vez más.
+func _freno_por_cansancio() -> float:
+	var queda: float = fraccion_de_aguante()
+	if queda >= AGUANTE_DEL_FRENO:
+		return 1.0
+	return lerpf(FRENO_MAXIMO, 1.0, queda / AGUANTE_DEL_FRENO)
+
+
+# Al de abajo se le acabó el aguante y la torre se deshace sola. El de arriba no se entera
+# por su cuenta, así que el aviso sale por el mismo rpc que usa el desmonte de siempre.
+func _tirar_la_torre() -> void:
+	if not is_instance_valid(gato_jinete):
+		return
+	gato_jinete.rpc_sincronizar_desmonte.rpc()
 	
 func comportamiento_normal(delta: float) -> void:
 	camera_3d.fov = lerpf(camera_3d.fov,fov_base,0.05)
-	speed = lerpf(speed,input_synchronizer.move_speed,0.05)
+	speed = lerpf(speed,_velocidad_objetivo(),0.05)
 	if is_emoteando:
 		velocity.x = move_toward(velocity.x,0,acceleration)
 		velocity.z = move_toward(velocity.z,0,acceleration)
@@ -304,7 +439,10 @@ func comportamiento_arriba(delta: float) -> void:
 		desmontarse()
 	
 func comportamiento_abajo(delta: float) -> void:
-	speed = lerpf(speed,input_synchronizer.move_speed,0.05)
+	# Cargando al otro, el paso depende de lo cansado que esté. Como el freno se calcula
+	# del aguante y el aguante corre igual en todas las máquinas, el gato se mueve igual
+	# en todas sin tener que sincronizar la velocidad aparte.
+	speed = lerpf(speed,_velocidad_objetivo() * _freno_por_cansancio(),0.05)
 	camera_3d.fov = lerpf(camera_3d.fov, 1 ,0.2)
 	
 	model.rotation.y = lerp_angle(
@@ -337,8 +475,15 @@ func comportamiento_abajo(delta: float) -> void:
 func intentar_subir(otro_gato: Player) -> void:
 	if not is_multiplayer_authority():
 		return
-	if self.posicion_actual == Posicion.LIBRE and otro_gato.posicion_actual == Posicion.LIBRE:
-		rpc("rpc_sincronizar_apilamiento", otro_gato.get_path())
+	if self.posicion_actual != Posicion.LIBRE or otro_gato.posicion_actual != Posicion.LIBRE:
+		return
+	# Mientras la barra del otro esté roja no se le puede subir nadie encima: tiene que
+	# recuperar hasta salir del rojo. Esto no bota torres armadas, solo impide armar una
+	# nueva. Al gato que ya va cargando no le pasa nada al entrar en rojo: aguanta hasta
+	# que la barra se vacía del todo.
+	if otro_gato.fraccion_de_aguante() <= AGUANTE_MINIMO_PARA_CARGAR:
+		return
+	rpc("rpc_sincronizar_apilamiento", otro_gato.get_path())
 		
 
 @rpc("any_peer", "call_local", "reliable")

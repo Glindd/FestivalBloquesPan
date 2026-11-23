@@ -1,0 +1,70 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://ui/combo/indicador_combo.gd" id="1_combo"]
+[ext_resource type="Texture2D" uid="uid://bbrpleyjp3mib" path="res://assets/ui/menus/boton_corto_crema.png" id="2_placa"]
+[ext_resource type="Texture2D" uid="uid://c8pesskrfpkvj" path="res://assets/ui/progreso/barra_simple_fondo.png" id="3_barra_fondo"]
+[ext_resource type="Texture2D" uid="uid://dr6xwbclkifqa" path="res://assets/ui/progreso/barra_simple_relleno.png" id="4_barra_relleno"]
+
+[node name="IndicadorCombo" type="Control"]
+layout_mode = 3
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -90.0
+offset_top = 182.0
+offset_right = 90.0
+offset_bottom = 268.0
+grow_horizontal = 2
+mouse_filter = 2
+script = ExtResource("1_combo")
+
+[node name="Placa" type="Control" parent="."]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 24.0
+offset_right = 156.0
+offset_bottom = 50.0
+mouse_filter = 2
+
+[node name="Fondo" type="TextureRect" parent="Placa"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("2_placa")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Numero" type="Label" parent="Placa"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 2.0
+offset_bottom = -4.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_type_variation = &"Numero"
+text = "x2"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="BarraRacha" type="TextureProgressBar" parent="."]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 24.0
+offset_top = 56.0
+offset_right = 303.0
+offset_bottom = 99.0
+scale = Vector2(0.4731, 0.4731)
+mouse_filter = 2
+value = 100.0
+texture_under = ExtResource("3_barra_fondo")
+texture_progress = ExtResource("4_barra_relleno")
+texture_progress_offset = Vector2(6, 7)
+tint_progress = Color(0.9686275, 0.7294118, 0.23529412, 1)

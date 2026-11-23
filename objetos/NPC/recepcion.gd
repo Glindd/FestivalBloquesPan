@@ -16,7 +16,11 @@ func _ready() -> void:
 		_iniciar_proximo_cliente()
 
 func _iniciar_proximo_cliente() -> void:
-	var tiempo_aleatorio = randf_range(tiempo_llegada_min, tiempo_llegada_max)
+	var tiempo_aleatorio: float = randf_range(tiempo_llegada_min, tiempo_llegada_max)
+	# La panadería puede comprar que corra la voz, y ahí los clientes tardan menos en
+	# aparecer. El factor va bajo uno, así que acorta la espera.
+	if Mejoras.instance:
+		tiempo_aleatorio *= Mejoras.instance.factor_de_llegada()
 	timer.start(tiempo_aleatorio)
 
 func _spawnear_cliente() -> void:

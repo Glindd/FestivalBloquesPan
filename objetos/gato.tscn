@@ -8,8 +8,11 @@
 [ext_resource type="PackedScene" uid="uid://bcvgt0g4rgq5d" path="res://Models/ChaquetaTemporal.blend" id="5_u3vet"]
 [ext_resource type="PackedScene" path="res://ui/emotes/rueda_emotes.tscn" id="6_rueda"]
 [ext_resource type="PackedScene" path="res://ui/emotes/burbuja_emote.tscn" id="7_burbuja"]
+[ext_resource type="PackedScene" path="res://ui/cansancio/globo_cansancio.tscn" id="12_globo_cansancio"]
 [ext_resource type="PackedScene" uid="uid://cn58is8kqida" path="res://ui/tienda/tienda.tscn" id="8_tienda"]
 [ext_resource type="PackedScene" uid="uid://xand64yanv2c" path="res://ui/cierre/cierre_de_dia.tscn" id="9_cierre"]
+[ext_resource type="PackedScene" path="res://ui/arbol/panel_arbol.tscn" id="11_arbol"]
+[ext_resource type="PackedScene" path="res://ui/pausa/menu_pausa.tscn" id="10_pausa"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_57qmd"]
 size = Vector3(2.176, 0.17325294, 4.199)
@@ -202,12 +205,19 @@ parameters/Arriba/blend_amount = 0.0
 [node name="BurbujaEmote" parent="." unique_id=2008976723 instance=ExtResource("7_burbuja")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.8, 0)
 
+[node name="GloboCansancio" parent="." instance=ExtResource("12_globo_cansancio")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.6, 0)
+
 [node name="InGameUI" type="CanvasLayer" parent="." unique_id=619116339]
 
-[node name="HUD" parent="InGameUI" unique_id=1513608797 node_paths=PackedStringArray("jugador", "tienda", "cierre") instance=ExtResource("4_a86pc")]
+[node name="MenuPausa" parent="InGameUI" instance=ExtResource("10_pausa")]
+
+[node name="HUD" parent="InGameUI" unique_id=1513608797 node_paths=PackedStringArray("jugador", "tienda", "cierre", "pausa", "arbol") instance=ExtResource("4_a86pc")]
 jugador = NodePath("../..")
 tienda = NodePath("../Tienda")
 cierre = NodePath("../CierreDeDia")
+pausa = NodePath("../MenuPausa")
+arbol = NodePath("../PanelArbol")
 
 [node name="RuedaEmotes" parent="InGameUI" unique_id=1347722817 node_paths=PackedStringArray("jugador") instance=ExtResource("6_rueda")]
 jugador = NodePath("../..")
@@ -217,3 +227,5 @@ jugador = NodePath("../..")
 [node name="CierreDeDia" parent="InGameUI" unique_id=843419722 instance=ExtResource("9_cierre")]
 
 [editable path="GatoV5_Bone"]
+
+[node name="PanelArbol" parent="InGameUI" instance=ExtResource("11_arbol")]

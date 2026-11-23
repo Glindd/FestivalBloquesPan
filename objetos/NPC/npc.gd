@@ -43,13 +43,22 @@ func _actualizar_animacion() -> void:
 		globo.esconder()
 		tween.tween_property(modelo, "position", pos_oculta, 0.4).set_trans(Tween.TRANS_SINE)
 
+## Cuántos segundos aguanta este cliente, ya contando lo que haya comprado la panadería.
+## Lo calculan todas las máquinas con el mismo dato, porque el árbol de mejoras es de la
+## panadería entera y viaja igual que el recetario.
+func paciencia_maxima() -> float:
+	if Mejoras.instance:
+		return segundos_de_paciencia * Mejoras.instance.factor_de_paciencia()
+	return segundos_de_paciencia
+
+
 # La paciencia baja en todas las máquinas para que la barra se vea igual en todas, pero
 # solo el servidor da por perdido al cliente, para que no se vaya dos veces.
 func _process(delta: float) -> void:
 	if not ocupado or paciencia_restante <= 0.0:
 		return
 	paciencia_restante = maxf(paciencia_restante - delta, 0.0)
-	globo.mostrar_paciencia(paciencia_restante / segundos_de_paciencia)
+	globo.mostrar_paciencia(paciencia_restante / paciencia_maxima())
 	if paciencia_restante > 0.0 or not multiplayer.is_server():
 		return
 	print("Servidor: el cliente de ", name, " se cansó de esperar")
@@ -65,7 +74,7 @@ func configurar_pedido_rpc(estado: bool, receta: String = "", atendido: bool = f
 	pedido_revelado = false
 	ocupado = estado
 	
-	paciencia_restante = segundos_de_paciencia if estado else 0.0
+	paciencia_restante = paciencia_maxima() if estado else 0.0
 	if ocupado:
 		globo.mostrar_incognita()
 		globo.mostrar_paciencia(1.0)
@@ -130,7 +139,13 @@ func _execute_interaction() -> void:
 				# recetario y no de un número escrito a mano.
 				var receta_pedida: RecetaDef = Recetario.instance.recetas.buscar_por_id(plato_entregado)
 				if receta_pedida:
-					GameManager.instance.añadir_dinero(receta_pedida.precio_venta)
+					# Entregar varios panes seguidos sube la racha, y la racha multiplica
+					# lo que paga cada uno. Encima va lo que la panadería haya comprado en
+					# el árbol, que sube el precio de todo por parejo.
+					var multiplicador: float = Jornada.instance.encadenar_entrega()
+					if Mejoras.instance:
+						multiplicador *= Mejoras.instance.multiplicador_de_precio()
+					GameManager.instance.añadir_dinero(int(roundf(receta_pedida.precio_venta * multiplicador)))
 				Jornada.instance.anotar_cliente_atendido()
 				Jornada.instance.anotar_pan_entregado()
 				

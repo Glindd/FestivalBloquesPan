@@ -26,7 +26,10 @@ Game="res://autoloads/game.tscn"
 Lobby="res://autoloads/lobby.tscn"
 GameManager="uid://b8a60luep3vjk"
 Recetario="res://objetos/recetas/recetario.tscn"
+Mejoras="res://objetos/mejoras/mejoras.tscn"
 Jornada="res://scripts/jornada.tscn"
+Configuracion="res://scripts/configuracion.tscn"
+BancoDePruebas="*res://autoloads/banco_de_pruebas.gd"
 
 [debug]
 

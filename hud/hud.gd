@@ -11,9 +11,15 @@ extends Control
 ## El panel que resume la jornada cuando se acaba el día. También vive fuera del HUD
 ## porque tapa la pantalla entera.
 @export var cierre: CierreDeDia
+## El menú de pausa, que también tapa la pantalla entera y vive fuera del HUD.
+@export var pausa: MenuPausa
+## El árbol de mejoras, que tapa la pantalla igual que la tienda.
+@export var arbol: PanelArbol
 @onready var barra_trabajo: TextureProgressBar = %BarraTrabajo
 @onready var boton_tienda: Button = %BotonTienda
 @onready var barra_meta: TextureProgressBar = %BarraMeta
+@onready var barra_cansancio: BarraCansancio = $BarraCansancio
+@onready var boton_mejoras: Button = %BotonMejoras
 
 func _ready() -> void:
 	if GameManager.instance:
@@ -26,7 +32,17 @@ func _ready() -> void:
 		hud.hide()
 		barra_trabajo.visible = false
 	_preparar_tienda()
+	_preparar_arbol()
+	_preparar_pausa()
+	_preparar_cansancio()
 	_preparar_jornada()
+
+# La barra de aguante solo la sigue el HUD del gato de esta máquina. Los otros gatos traen
+# su propio HUD escondido, y no tiene sentido que anden calculando una barra que nadie ve.
+func _preparar_cansancio() -> void:
+	if not is_multiplayer_authority():
+		return
+	barra_cansancio.seguir(jugador)
 	
 # El botón solo aparece si la escena trae una tienda enlazada. Mientras está abierta el
 # gato deja de caminar, porque el jugador está mirando el panel y no la cocina.
@@ -45,6 +61,41 @@ func _abrir_tienda() -> void:
 	hud.hide()
 
 func _al_cerrar_tienda() -> void:
+	_cambiar_marca_de_interfaz(false)
+	hud.visible = is_multiplayer_authority()
+
+# El árbol de mejoras se abre y se cierra igual que la tienda: tapa la pantalla entera,
+# así que mientras está abierto el HUD se esconde y el gato deja de caminar. El botón
+# solo aparece si la escena trae un árbol enlazado.
+func _preparar_arbol() -> void:
+	boton_mejoras.visible = arbol != null
+	if arbol == null:
+		return
+	boton_mejoras.pressed.connect(_abrir_arbol)
+	arbol.cerrada.connect(_al_cerrar_el_arbol)
+
+func _abrir_arbol() -> void:
+	arbol.abrir()
+	_cambiar_marca_de_interfaz(true)
+	hud.hide()
+
+func _al_cerrar_el_arbol() -> void:
+	_cambiar_marca_de_interfaz(false)
+	hud.visible = is_multiplayer_authority()
+
+# El menú de pausa se comporta igual que la tienda: tapa la pantalla, así que mientras
+# está abierto el HUD se esconde y el gato deja de caminar.
+func _preparar_pausa() -> void:
+	if pausa == null:
+		return
+	pausa.abierto.connect(_al_abrir_la_pausa)
+	pausa.cerrado.connect(_al_cerrar_la_pausa)
+
+func _al_abrir_la_pausa() -> void:
+	_cambiar_marca_de_interfaz(true)
+	hud.hide()
+
+func _al_cerrar_la_pausa() -> void:
 	_cambiar_marca_de_interfaz(false)
 	hud.visible = is_multiplayer_authority()
 

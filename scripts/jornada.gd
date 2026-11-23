@@ -27,6 +27,25 @@ signal dia_terminado(numero_de_dia: int, monedas: int, clientes: int, panes: int
 ## Se emite cada vez que cambia lo juntado, para que el HUD mueva su barra de meta.
 signal avance_cambiado(monedas: int, meta: int)
 
+## Por cuánto se multiplica lo que paga cada pan según el largo de la racha. La primera
+## entrega paga normal y de ahí sube, hasta quedarse en el último valor de la lista.
+const MULTIPLICADORES_DE_RACHA: Array[float] = [1.0, 1.5, 2.0, 3.0]
+
+## Cuántos segundos hay para encadenar la siguiente entrega antes de que la racha se
+## corte. Va casillero a casillero con la lista de multiplicadores y se acorta a
+## propósito: mientras más alto el multiplicador, menos margen queda. Si no, llegar una
+## vez al x3 alcanzaba para quedarse ahí el resto del día entregando sin apuro, y el
+## premio por arriesgarse dejaba de ser un premio.
+##
+## Las dos listas se leen con el mismo índice, así que un escalón nuevo se agrega en las
+## dos a la vez.
+const SEGUNDOS_DE_RACHA: Array[float] = [8.0, 6.0, 4.5, 3.5]
+
+## Se emite en todas las máquinas cuando cambia la racha, para que el HUD la muestre. Los
+## segundos que manda son los de la racha recién alcanzada, que es el plazo con el que
+## queda el jugador de ahí en adelante.
+signal racha_cambiada(entregas_seguidas: int, multiplicador: float, segundos: float)
+
 var numero_de_dia: int = 1
 
 # La caja del GameManager es acumulada, así que lo del día sale de restar con cuánto se
@@ -36,6 +55,13 @@ var _clientes_atendidos: int = 0
 var _panes_entregados: int = 0
 var _clientes_perdidos: int = 0
 var _dia_cerrado: bool = false
+
+# Cuántas entregas seguidas lleva la panadería sin que se le enfríe la racha.
+var _racha: int = 0
+
+# Cuándo fue la última entrega. Solo lo usa el servidor, que es el que decide si la
+# siguiente encadena o si la racha ya se cortó.
+var _momento_de_la_ultima_entrega: float = 0.0
 
 
 func _ready() -> void:
@@ -111,6 +137,67 @@ func pedir_siguiente_dia() -> void:
 	_pedir_siguiente_dia.rpc()
 
 
+## Lo llama el puesto justo antes de cobrar un pan. Suma esa entrega a la racha y
+## devuelve por cuánto hay que multiplicar su precio. Solo tiene sentido en el servidor,
+## que es el único que mueve el dinero, así que en los demás devuelve el multiplicador
+## neutro y no toca nada.
+func encadenar_entrega() -> float:
+	if not multiplayer.is_server():
+		return 1.0
+	var ahora: float = _ahora()
+	# El plazo que se mira es el de la racha como está ahora, que es el que el jugador
+	# venía viendo correr en la barra, y no el de la entrega que recién llega.
+	var sigue_la_racha: bool = _racha > 0 and ahora - _momento_de_la_ultima_entrega <= segundos_de_racha(_racha)
+	_momento_de_la_ultima_entrega = ahora
+	var largo: int = _racha + 1 if sigue_la_racha else 1
+	_fijar_racha.rpc(largo)
+	return multiplicador_de_racha(largo)
+
+
+## Cuántas entregas seguidas lleva la panadería.
+func racha() -> int:
+	return _racha
+
+
+## Por cuánto multiplica una racha de ese largo.
+func multiplicador_de_racha(largo: int) -> float:
+	if largo <= 0:
+		return 1.0
+	return MULTIPLICADORES_DE_RACHA[mini(largo - 1, MULTIPLICADORES_DE_RACHA.size() - 1)]
+
+
+## Cuántos segundos quedan para encadenar cuando la racha va en ese largo. Sin racha
+## devuelve el plazo más ancho, que es con el que arranca la primera entrega.
+func segundos_de_racha(largo: int) -> float:
+	var base: float = SEGUNDOS_DE_RACHA[0]
+	if largo > 0:
+		base = SEGUNDOS_DE_RACHA[mini(largo - 1, SEGUNDOS_DE_RACHA.size() - 1)]
+	# El plazo se estira con lo que la panadería haya comprado en el árbol. Va acá y no
+	# en cada lugar que lo usa, para que el servidor y la barra del HUD midan lo mismo.
+	if Mejoras.instance:
+		return base * Mejoras.instance.factor_de_ventana_de_racha()
+	return base
+
+
+# La racha se enfría sola. El que lleva el reloj es el servidor, y cuando se le acaba el
+# plazo avisa a todas las máquinas, igual que con cualquier otro cambio del día.
+func _process(_delta: float) -> void:
+	if not multiplayer.is_server() or _racha <= 0:
+		return
+	if _ahora() - _momento_de_la_ultima_entrega > segundos_de_racha(_racha):
+		_fijar_racha.rpc(0)
+
+
+@rpc("authority", "call_local", "reliable")
+func _fijar_racha(largo: int) -> void:
+	_racha = largo
+	racha_cambiada.emit(_racha, multiplicador_de_racha(_racha), segundos_de_racha(_racha))
+
+
+func _ahora() -> float:
+	return float(Time.get_ticks_msec()) / 1000.0
+
+
 func _conectar_game_manager() -> void:
 	var gestor: GameManager = GameManager.instance
 	gestor.timer_updated.connect(_al_cambiar_el_reloj)
@@ -150,6 +237,8 @@ func _empezar_dia(numero: int) -> void:
 	_panes_entregados = 0
 	_clientes_perdidos = 0
 	_dia_cerrado = false
+	_racha = 0
+	racha_cambiada.emit(0, 1.0, segundos_de_racha(0))
 	if GameManager.instance:
 		_caja_al_empezar = GameManager.instance.dinero_recaudado
 	avance_cambiado.emit(0, meta_de_monedas)
