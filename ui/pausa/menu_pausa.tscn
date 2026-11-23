@@ -1,8 +1,13 @@
-[gd_scene load_steps=6 format=3]
+[gd_scene load_steps=10 format=3]
 
 [ext_resource type="Script" path="res://ui/pausa/menu_pausa.gd" id="1_pausa"]
 [ext_resource type="Theme" uid="uid://c1h8f62iw8uqo" path="res://ui/Theme/panacats_theme.tres" id="2_tema"]
 [ext_resource type="Texture2D" uid="uid://dcategtouhxb6" path="res://assets/ui/tienda_y_cierre/cinta_titulo.png" id="3_cinta"]
+[ext_resource type="FontFile" uid="uid://c036f4b7ps2mt" path="res://assets/ui/fuentes/Jersey25-Regular.ttf" id="4_fuente"]
+[ext_resource type="Texture2D" uid="uid://cltkb5mw2o10r" path="res://assets/ui/menus/checkbox_marcado.png" id="5_marcado"]
+[ext_resource type="Texture2D" uid="uid://dyt2s8meq8rfi" path="res://assets/ui/menus/checkbox_vacio.png" id="6_vacio"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_plano"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_canal"]
 content_margin_top = 4.0
@@ -106,7 +111,9 @@ theme_override_constants/separation = 10
 
 [node name="TextoVolumen" type="Label" parent="Marco/PaginaAjustes"]
 layout_mode = 2
-theme_type_variation = &"Subtitulo"
+theme_override_colors/font_color = Color(0.2901961, 0.1960784, 0.1490196, 1)
+theme_override_fonts/font = ExtResource("4_fuente")
+theme_override_font_sizes/font_size = 26
 text = "Volumen"
 
 [node name="BarraVolumen" type="HSlider" parent="Marco/PaginaAjustes"]
@@ -120,7 +127,9 @@ value = 80.0
 
 [node name="TextoSensibilidad" type="Label" parent="Marco/PaginaAjustes"]
 layout_mode = 2
-theme_type_variation = &"Subtitulo"
+theme_override_colors/font_color = Color(0.2901961, 0.1960784, 0.1490196, 1)
+theme_override_fonts/font = ExtResource("4_fuente")
+theme_override_font_sizes/font_size = 26
 text = "Sensibilidad del mouse"
 
 [node name="BarraSensibilidad" type="HSlider" parent="Marco/PaginaAjustes"]
@@ -132,11 +141,31 @@ theme_override_styles/grabber_area = SubResource("StyleBoxFlat_relleno")
 theme_override_styles/grabber_area_highlight = SubResource("StyleBoxFlat_relleno")
 value = 30.0
 
-[node name="PantallaCompleta" type="CheckButton" parent="Marco/PaginaAjustes"]
-unique_name_in_owner = true
+[node name="FilaPantallaCompleta" type="HBoxContainer" parent="Marco/PaginaAjustes"]
 custom_minimum_size = Vector2(0, 48)
 layout_mode = 2
+
+[node name="TextoPantallaCompleta" type="Label" parent="Marco/PaginaAjustes/FilaPantallaCompleta"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.2901961, 0.1960784, 0.1490196, 1)
+theme_override_fonts/font = ExtResource("4_fuente")
+theme_override_font_sizes/font_size = 26
 text = "Pantalla completa"
+vertical_alignment = 1
+
+[node name="PantallaCompleta" type="CheckButton" parent="Marco/PaginaAjustes/FilaPantallaCompleta"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 4
+theme_override_icons/checked = ExtResource("5_marcado")
+theme_override_icons/unchecked = ExtResource("6_vacio")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_plano")
+theme_override_styles/hover = SubResource("StyleBoxEmpty_plano")
+theme_override_styles/hover_pressed = SubResource("StyleBoxEmpty_plano")
+theme_override_styles/normal = SubResource("StyleBoxEmpty_plano")
+theme_override_styles/pressed = SubResource("StyleBoxEmpty_plano")
 
 [node name="Separador" type="Control" parent="Marco/PaginaAjustes"]
 custom_minimum_size = Vector2(0, 8)
