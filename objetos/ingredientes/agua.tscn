@@ -4,16 +4,17 @@
 [ext_resource type="PackedScene" uid="uid://75mqvutl4mlh" path="res://Models/ingredientes/botella-agua.glb" id="2_tkm84"]
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_qh4t1"]
-height = 0.4
+height = 0.3
 radius = 0.107421875
 
 [node name="Agua" unique_id=344026824 instance=ExtResource("1_2mug6")]
 nombre_ingrediente = "agua"
 
 [node name="botella-agua" parent="." index="0" unique_id=926236328 instance=ExtResource("2_tkm84")]
+transform = Transform3D(0.7, 0, 0, 0, 0.7, 0, 0, 0, 0.7, 0, 0, 0)
 
 [node name="CollisionShape3D" parent="." index="1" unique_id=502487091]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.19238353, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1416739, 0)
 shape = SubResource("CylinderShape3D_qh4t1")
 
 [node name="Label3D" parent="." index="3" unique_id=859107585]
