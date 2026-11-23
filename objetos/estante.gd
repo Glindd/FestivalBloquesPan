@@ -4,9 +4,23 @@ extends ObjetoInteractuable
 @export var tipo_de_ingrediente: PackedScene 
 @onready var nodo_spawn: Marker3D = $SpawnPoint
 @onready var spawner_ingrediente: MultiplayerSpawner = $IngredientSpawner
+@onready var positions: Array[Marker3D] = [$Ing1, $Ing2, $Ing3, $Ing4]
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	super() 
+	super()
+	var nombre_unico: String
+	var nuevo_ingrediente: Ingrediente
+	for pos in positions:
+		nombre_unico = "Ingrediente_" + str(Time.get_ticks_msec())
+		nuevo_ingrediente = tipo_de_ingrediente.instantiate()
+		nuevo_ingrediente.name = nombre_unico
+		nuevo_ingrediente.collision_layer = 0
+		nuevo_ingrediente.collision_mask = 0
+		nuevo_ingrediente.freeze = true
+		self.add_child(nuevo_ingrediente)
+		nuevo_ingrediente.global_position = pos.global_position
+	
+	
 
 func texto_de_ayuda(_jugador: Player) -> String:
 	return "Presionar E para tomar"

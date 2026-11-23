@@ -1,22 +1,19 @@
 [gd_scene format=3 uid="uid://cnjflu5k247wb"]
 
 [ext_resource type="PackedScene" uid="uid://l2af6dmxdm7e" path="res://objetos/ingredientes/ingrediente_base.tscn" id="1_ppodq"]
-[ext_resource type="Texture2D" uid="uid://jwwieows7e8w" path="res://Texturas/rojo.jpg" id="2_h4uxd"]
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_kmnih"]
-albedo_texture = ExtResource("2_h4uxd")
+[ext_resource type="PackedScene" uid="uid://c5ii1t86if1jd" path="res://Models/ingredientes/levadura.glb" id="2_y5kkv"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_cs4y6"]
-size = Vector3(0.03, 0.03, 0.015)
+size = Vector3(0.17, 0.23, 0.09)
 
 [node name="Levadura" unique_id=344026824 instance=ExtResource("1_ppodq")]
 nombre_ingrediente = "levadura"
 
-[node name="MeshInstance3D" parent="." index="0" unique_id=2021670818]
-transform = Transform3D(0.03, 0, 0, 0, 0.03, 0, 0, 0, 0.015, 0, 0, 0)
-material_override = SubResource("StandardMaterial3D_kmnih")
+[node name="levadura" parent="." index="0" unique_id=1050643774 instance=ExtResource("2_y5kkv")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 0, 0, 0)
 
 [node name="CollisionShape3D" parent="." index="1" unique_id=502487091]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.111083984, 0)
 shape = SubResource("BoxShape3D_cs4y6")
 
 [node name="Label3D" parent="." index="3" unique_id=859107585]
