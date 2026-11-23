@@ -3,13 +3,6 @@
 [ext_resource type="Script" uid="uid://diyam67jhhm72" path="res://objetos/ingredientes/ingrediente_base.gd" id="1_ngaf5"]
 [ext_resource type="FontFile" uid="uid://c036f4b7ps2mt" path="res://assets/ui/fuentes/Jersey25-Regular.ttf" id="2_fuente"]
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_y8xqb"]
-
-[sub_resource type="BoxMesh" id="BoxMesh_g4v7s"]
-size = Vector3(2.5861816, 2.3794556, 1)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ngaf5"]
-
 [sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_hny1d"]
 points = PackedVector3Array(-0.5, -0.5, -0.5, 0.5, 0.5, 0.5, 0.5, -0.5, 0.5, 0.5, 0.5, -0.5, -0.5, 0.5, 0.5, 0.5, -0.5, -0.5, -0.5, -0.5, 0.5, -0.5, 0.5, -0.5)
 
@@ -24,11 +17,6 @@ properties/1/replication_mode = 1
 [node name="IngredienteBase" type="RigidBody3D" unique_id=344026824 groups=["tomable"]]
 collision_layer = 2
 script = ExtResource("1_ngaf5")
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=2021670818]
-material_override = SubResource("StandardMaterial3D_y8xqb")
-mesh = SubResource("BoxMesh_g4v7s")
-surface_material_override/0 = SubResource("StandardMaterial3D_ngaf5")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=502487091]
 shape = SubResource("ConvexPolygonShape3D_hny1d")

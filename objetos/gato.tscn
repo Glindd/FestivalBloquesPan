@@ -2,10 +2,10 @@
 
 [ext_resource type="Script" uid="uid://et0d13beg1xs" path="res://objetos/gato.gd" id="1_jmo73"]
 [ext_resource type="PackedScene" uid="uid://7am66ghqrttv" path="res://objetos/input_synchronizer.tscn" id="2_nxguc"]
-[ext_resource type="PackedScene" uid="uid://bmng82ys0g0x7" path="res://models/GatoV5_Bone.glb" id="3_5vjbb"]
+[ext_resource type="PackedScene" uid="uid://bmng82ys0g0x7" path="res://Models/GatoV5_Bone.glb" id="3_5vjbb"]
 [ext_resource type="PackedScene" uid="uid://di6skkic6oys7" path="res://hud/hud.tscn" id="4_a86pc"]
 [ext_resource type="Resource" uid="uid://0jt1wniw86x3" path="res://ui/emotes/emotes_base.tres" id="5_emotes"]
-[ext_resource type="PackedScene" uid="uid://bcvgt0g4rgq5d" path="res://models/ChaquetaTemporal.blend" id="5_u3vet"]
+[ext_resource type="PackedScene" uid="uid://bcvgt0g4rgq5d" path="res://Models/ChaquetaTemporal.blend" id="5_u3vet"]
 [ext_resource type="PackedScene" path="res://ui/emotes/rueda_emotes.tscn" id="6_rueda"]
 [ext_resource type="PackedScene" path="res://ui/emotes/burbuja_emote.tscn" id="7_burbuja"]
 [ext_resource type="PackedScene" path="res://ui/cansancio/globo_cansancio.tscn" id="12_globo_cansancio"]
@@ -93,7 +93,7 @@ graph_offset = Vector2(5.35849, 10)
 [sub_resource type="AnimationNodeBlend2" id="AnimationNodeBlend2_3and3"]
 
 [sub_resource type="AnimationNodeBlendTree" id="AnimationNodeBlendTree_s6x3c"]
-graph_offset = Vector2(-966.1952, -104.19711)
+graph_offset = Vector2(-456.94864, 235.24036)
 nodes/output/position = Vector2(920, 140)
 nodes/Accion/node = SubResource("AnimationNodeBlend2_5vjbb")
 nodes/Accion/position = Vector2(60, 120)
@@ -166,22 +166,22 @@ replication_config = SubResource("SceneReplicationConfig_nxguc")
 [node name="GatoV5_Bone" parent="." unique_id=596813472 instance=ExtResource("3_5vjbb")]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 0, 0, 0)
 
-[node name="Esqueleto" parent="GatoV5_Bone" index="0" unique_id=284028510]
+[node name="Esqueleto" parent="GatoV5_Bone" index="0" unique_id=893713109]
 transform = Transform3D(0.99999994, 0, 0, 0, 1, 0, 0, 0, 0.99999994, 0.023801684, 0.49323237, -0.00069081783)
 
-[node name="Skeleton3D" parent="GatoV5_Bone/Esqueleto" index="0" unique_id=1390489749]
+[node name="Skeleton3D" parent="GatoV5_Bone/Esqueleto" index="0" unique_id=1028481946]
 transform = Transform3D(1, 0, 0, 0, 0.99999994, 0, 0, 0, 1, -1.1712862, 0, -5.122274e-08)
 bones/2/rotation = Quaternion(0.05851205, -7.375891e-07, 1.0715464e-08, 0.9982868)
 bones/21/rotation = Quaternion(-0.31248534, -0.07121363, -0.007928816, 0.9472164)
 bones/28/rotation = Quaternion(0.565182, 0.58557755, -0.548993, 0.1904603)
 
-[node name="Label3D" type="Label3D" parent="GatoV5_Bone/Esqueleto/Skeleton3D/Cube" parent_id_path=PackedInt32Array(596813472, 674349732) index="0" unique_id=282183671]
+[node name="Label3D" type="Label3D" parent="GatoV5_Bone/Esqueleto/Skeleton3D/Cube" parent_id_path=PackedInt32Array(596813472, 877950971) index="0" unique_id=282183671]
 transform = Transform3D(2.7599998, 0, -1.4210855e-14, 0, 2.7599998, 0, 1.4210855e-14, 0, 2.7599998, 3.8063977, 2.936767, 0.117203265)
 visible = false
 billboard = 2
 text = "miau"
 
-[node name="Capa" type="Node3D" parent="GatoV5_Bone/Esqueleto/Skeleton3D/Cube" parent_id_path=PackedInt32Array(596813472, 674349732) index="1" unique_id=1954437118]
+[node name="Capa" type="Node3D" parent="GatoV5_Bone/Esqueleto/Skeleton3D/Cube" parent_id_path=PackedInt32Array(596813472, 877950971) index="1" unique_id=1954437118]
 transform = Transform3D(-4.3711392e-08, 0, -1, 0, 1, 0, 1, 0, -4.3711392e-08, 1.1474845, 3.3067675, 0.0006908691)
 
 [node name="ChaquetaTemporal" parent="GatoV5_Bone/Esqueleto/Skeleton3D/Cube/Capa" unique_id=1274699927 instance=ExtResource("5_u3vet")]

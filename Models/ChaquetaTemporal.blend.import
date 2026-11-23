@@ -4,12 +4,12 @@ importer="scene"
 importer_version=1
 type="PackedScene"
 uid="uid://bcvgt0g4rgq5d"
-path="res://.godot/imported/ChaquetaTemporal.blend-dd11a8552287aaea8a3a480d429a4039.scn"
+path="res://.godot/imported/ChaquetaTemporal.blend-ed95ee2c977923cba7f16379ca02e86b.scn"
 
 [deps]
 
-source_file="res://models/ChaquetaTemporal.blend"
-dest_files=["res://.godot/imported/ChaquetaTemporal.blend-dd11a8552287aaea8a3a480d429a4039.scn"]
+source_file="res://Models/ChaquetaTemporal.blend"
+dest_files=["res://.godot/imported/ChaquetaTemporal.blend-ed95ee2c977923cba7f16379ca02e86b.scn"]
 
 [params]
 

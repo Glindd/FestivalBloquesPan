@@ -1,23 +1,19 @@
 [gd_scene format=3 uid="uid://dgiiykt7iitta"]
 
 [ext_resource type="PackedScene" uid="uid://l2af6dmxdm7e" path="res://objetos/ingredientes/ingrediente_base.tscn" id="1_7w6gu"]
-[ext_resource type="Texture2D" uid="uid://dey7mgyty4gk0" path="res://Texturas/icono-trigo.png" id="2_31qwt"]
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_cgjoe"]
-albedo_texture = ExtResource("2_31qwt")
+[ext_resource type="PackedScene" uid="uid://c2ghn0rb7go1w" path="res://Models/ingredientes/harina.glb" id="2_cgjoe"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_sq57i"]
-size = Vector3(0.115997314, 0.3106079, 0.2109375)
+size = Vector3(0.15, 0.311, 0.211)
 
 [node name="RigidBody3D" unique_id=344026824 instance=ExtResource("1_7w6gu")]
 nombre_ingrediente = "harina"
 
-[node name="MeshInstance3D" parent="." index="0" unique_id=2021670818]
-transform = Transform3D(0.1, 0, 0, 0, 0.3, 0, 0, 0, 0.2, 0, 0, 0)
-material_override = SubResource("StandardMaterial3D_cgjoe")
+[node name="harina" parent="." index="0" unique_id=1876327353 instance=ExtResource("2_cgjoe")]
+transform = Transform3D(-3.059797e-08, 0, 0.7, 0, 0.7, 0, -0.7, 0, -3.059797e-08, 0, 0, 0)
 
 [node name="CollisionShape3D" parent="." index="1" unique_id=502487091]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.5776367e-05, -0.004425049, -0.001953125)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.5776367e-05, 0.015678406, -0.001953125)
 shape = SubResource("BoxShape3D_sq57i")
 
 [node name="Label3D" parent="." index="3" unique_id=859107585]
